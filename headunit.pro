@@ -45,10 +45,11 @@ FORMS	= ConfigDialog.ui
 
 win32 {
   CONFIG  += console   # Comment out this line to disable console window
+  DEFINES += ID3LIB_LINKOPTION=1
   SOURCES += DirectShowMediaPlayer.cpp
-  INCLUDEPATH += d:/DX90SDK/Include
-  LIBPATH += d:/DX90SDK/Lib
-  LIBS += strmiids.lib
+  INCLUDEPATH += d:/DX90SDK/Include d:/id3lib/include
+  LIBPATH += d:/DX90SDK/Lib d:/id3lib/lib
+  LIBS += strmiids.lib id3lib.lib
 }
 
 unix {
