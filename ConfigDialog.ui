@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ConfigDialog</class>
 <widget class="QDialog">
     <property name="name">
@@ -109,35 +109,6 @@
                     <string>Browse</string>
                 </property>
             </widget>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineEditPath</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>30</x>
-                        <y>40</y>
-                        <width>511</width>
-                        <height>40</height>
-                    </rect>
-                </property>
-                <property name="font">
-                    <font>
-                    </font>
-                </property>
-                <property name="text">
-                    <string>Text</string>
-                </property>
-                <property name="frame">
-                    <bool>false</bool>
-                </property>
-                <property name="alignment">
-                    <set>AlignHCenter</set>
-                </property>
-                <property name="readOnly">
-                    <bool>true</bool>
-                </property>
-            </widget>
             <widget class="QLabel">
                 <property name="name">
                     <cstring>textLabelInfo</cstring>
@@ -173,6 +144,41 @@
                     <string>Rebuild Database</string>
                 </property>
             </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>lineEditPath</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>30</x>
+                        <y>40</y>
+                        <width>511</width>
+                        <height>40</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                    </font>
+                </property>
+                <property name="frameShape">
+                    <enum>NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                    <enum>Plain</enum>
+                </property>
+                <property name="text">
+                    <string>Text</string>
+                </property>
+                <property name="frame">
+                    <bool>false</bool>
+                </property>
+                <property name="alignment">
+                    <set>AlignHCenter</set>
+                </property>
+                <property name="readOnly">
+                    <bool>true</bool>
+                </property>
+            </widget>
         </widget>
         <widget class="QWidget">
             <property name="name">
@@ -181,19 +187,6 @@
             <attribute name="title">
                 <string>File Types</string>
             </attribute>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineEditExtension</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>30</y>
-                        <width>311</width>
-                        <height>41</height>
-                    </rect>
-                </property>
-            </widget>
             <widget class="QPushButton">
                 <property name="name">
                     <cstring>pushButtonAdd</cstring>
@@ -259,6 +252,19 @@
                 </property>
                 <property name="text">
                     <string>Remove</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>lineEditExtension</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>30</y>
+                        <width>311</width>
+                        <height>41</height>
+                    </rect>
                 </property>
             </widget>
         </widget>
