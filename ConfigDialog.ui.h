@@ -38,11 +38,11 @@ void ConfigDialog::init()
     
     // setup db
     db = new DBHandler();
-    connect( db, SIGNAL(dbStatus(int,QString&)), this, SLOT(currentStatus(int,QString&)) );
+    connect( db, SIGNAL(dbStatus(int,const QString&)), this, SLOT(currentStatus(int,const QString&)) );
 }
 
 
-void ConfigDialog::currentStatus( int numFiles, QString & path )
+void ConfigDialog::currentStatus( int numFiles, const QString & path )
 {
     lcdNumFiles->display(numFiles);
     if (checkShowFiles->isChecked())

@@ -7,6 +7,7 @@
 #include "SelectionList.h"
 #include "FileItem.h"
 #include "Skin.h"
+#include "DBHandler.h"
 
 const char *AudioBrowserScreen::buttonKeys[AudioBrowserScreen::NUM_BUTTONS] = 
   { "SELECT", "SELECT+", "BACK", "BROWSE", "EXIT", "PGDOWN", "DOWN", "UP", "PGUP" };
@@ -28,8 +29,7 @@ AudioBrowserScreen::AudioBrowserScreen() : FunctionScreen("AudioBrowser")
   buttons[PGUP]->setAutoRepeat(true);
   buttons[PGDOWN]->setAutoRepeat(true);
 
-  audioFileFilter = "*";
-  fileList = skin.getSelectionList(slKey, *this);
+  listView = skin.getSelectionList(slKey, *this);
   rootDir = settings.readEntry( "headunit/musicpath" , "./" );
   QDir dir(rootDir);
   rootDir = dir.canonicalPath();
@@ -40,38 +40,45 @@ void AudioBrowserScreen::init()
 {
   connect(buttons[EXIT], SIGNAL(clicked()), audioPlayer, SLOT(show()));
   connect(buttons[EXIT], SIGNAL(clicked()), this, SLOT(hide()));
-  connect(buttons[DOWN], SIGNAL(clicked()), fileList, SLOT(scrollDown()));
-  connect(buttons[UP], SIGNAL(clicked()), fileList, SLOT(scrollUp()));
-  connect(buttons[PGDOWN], SIGNAL(clicked()), fileList,SLOT(scrollPageDown()));
-  connect(buttons[PGUP], SIGNAL(clicked()), fileList, SLOT(scrollPageUp()));
-  connect(buttons[SELECT], SIGNAL(clicked()), this, SLOT(selectHighlighted()));
-  connect(buttons[PLUS], SIGNAL(clicked()), this, SLOT(selectHighlighted()));
-  connect(fileList,SIGNAL(highlighted(int)),this,SLOT(highlight(int)));
-  connect(fileList,SIGNAL(selected(int)),this, SLOT(select(int)));
+  connect(buttons[DOWN], SIGNAL(clicked()), listView, SLOT(scrollDown()));
+  connect(buttons[UP], SIGNAL(clicked()), listView, SLOT(scrollUp()));
+  connect(buttons[PGDOWN], SIGNAL(clicked()), listView,SLOT(scrollPageDown()));
+  connect(buttons[PGUP], SIGNAL(clicked()), listView, SLOT(scrollPageUp()));
+  connect(buttons[SELECT], SIGNAL(clicked()), this, SLOT(selectFolder()));
+  connect(buttons[PLUS], SIGNAL(clicked()), this, SLOT(selectFolderPlus()));
+  connect(listView,SIGNAL(highlighted(int)),this,SLOT(highlight(int)));
+  connect(listView,SIGNAL(selected(int)),this, SLOT(select(int)));
 
   setDir(rootDir);
 }
 
 void AudioBrowserScreen::setDir(const QString &path)
 {
-  QDir dir(path, audioFileFilter, QDir::DirsFirst);
-  dir.setMatchAllDirs(true);
+  QDir dir(path, QString::null, QDir::Name | QDir::DirsFirst, QDir::Dirs);
   if (!dir.isReadable())
     return;
   QString currPath = dir.canonicalPath();
   if (!currPath.startsWith(rootDir))
     return;
 
-  fileList->clear();
-  
+  listView->clear();
+
+  // read directories from file system
+  currDir = currPath;
   QStringList entries = dir.entryList();
   QStringList::ConstIterator it = entries.constBegin();
-  currDir = currPath;
-  QString file = currDir + "/";
   while (it != entries.constEnd()) {
-    if (*it != ".")
-      fileList->insertItem(new FileItem(QString(file).append(*it)));
+    QString entry = *it;
+    if (entry != "." && (entry != ".." || currDir != rootDir))
+        listView->insertDir(entry);
     ++it;
+  }
+
+  // read files from database using current directory as key
+  dbHandler->loadMusicList(currDir, false, musicList);
+  int size = musicList.size();
+  for (int i=0; i<size; i++) {
+    listView->insertItem(musicList[i].title());
   }
 }
 
@@ -79,17 +86,31 @@ void AudioBrowserScreen::highlight(int index)
 {
 }
 
-void AudioBrowserScreen::selectHighlighted() 
+void AudioBrowserScreen::selectFolder() 
 {
-  select(fileList->currentItem());
+  QString path = currDir;
+  int i = listView->currentItem();
+  if (listView->isDir(i)) {
+    path += "/" + listView->dir(i);
+  }
+  emit folderSelected(path, false, 0);
+}
+
+void AudioBrowserScreen::selectFolderPlus() 
+{
+  QString path = currDir;
+  int i = listView->currentItem();
+  if (listView->isDir(i)) {
+    path += "/" + listView->dir(i);
+  }
+  emit folderSelected(path, true, 0);
 }
 
 void AudioBrowserScreen::select(int index) 
 {
-  QString path = ((FileItem *)(fileList->item(index)))->fileName();
-  if (QFileInfo(path).isDir())
-    setDir(path);
+  if (listView->isDir(index))
+    setDir(currDir + "/" + listView->dir(index));
   else
-    emit fileSelected(path);
+    emit folderSelected(currDir, false, 0);
 }
 

@@ -2,6 +2,7 @@
 #define AUDIOPLAYERSCREEN_H
 
 #include "Screen.h"
+#include "MediaList.h"
 
 class Button;
 class QLabel;
@@ -13,23 +14,19 @@ class AudioPlayerScreen : public FunctionScreen
  public:
   AudioPlayerScreen();
   void init();
-  void addMRLToPlayList(const QString &file);
 
  public slots:
-  void addFileToPlayList(const QString &file);
   void endOfStreamReached();
+  void loadFolder(QString& path, bool plus, int index);
 
  private slots:
   void play();
   void stop();
   void previous();
   void next();
-  void savePlayList();
   void updateInfo();
 
  private:
-  void loadPlayList();
-
   enum {VISU, MODE, MIXER, MUTE, VOLDN, VOLUP, PREV, PLAY, NEXT, STOP, 
 	EJECT, LIST, EXIT, PGDOWN, DOWN, UP, PGUP, NUM_BUTTONS};
   Button *buttons[NUM_BUTTONS];
@@ -40,7 +37,8 @@ class AudioPlayerScreen : public FunctionScreen
   QLabel *labels[NUM_LABELS];
   static const char *labelKeys[NUM_LABELS];
 
-  SelectionList *playList;
+  SelectionList *listView;
+  MediaList playList;
   static const char *slKey;
 
   QTimer *updateTimer;

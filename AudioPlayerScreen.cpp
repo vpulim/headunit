@@ -8,6 +8,7 @@
 #include "AudioBrowserScreen.h"
 #include "MediaPlayer.h"
 #include "SelectionList.h"
+#include "ApplicationState.h"
 #include "MediaItem.h"
 #include "Skin.h"
 
@@ -19,12 +20,6 @@ const char *AudioPlayerScreen::labelKeys[AudioPlayerScreen::NUM_LABELS] =
   {"TRACKNUMBER","TRACKNAME","PLAYLIST","VOLUME","STATUS","CURRENTTRACKTIME","TRACKTIME","TIME","DATE"};
 
 const char *AudioPlayerScreen::slKey = "S01";
-
-#define QUERY_MUSIC_ITEM "select artist, album, title, genre from music "
-#define CREATE_PLAYLIST "create table playlist (id integer primary key, mrl text)"
-#define INSERT_PLAYLIST "insert into playlist (mrl) values (:mrl)"
-#define QUERY_PLAYLIST "select mrl from playlist"
-#define DROP_PLAYLIST "drop table playlist"
 
 AudioPlayerScreen::AudioPlayerScreen() : FunctionScreen("AudioPlayer")
 {
@@ -47,7 +42,7 @@ AudioPlayerScreen::AudioPlayerScreen() : FunctionScreen("AudioPlayer")
     labels[i] = skin.getLabel(labelKeys[i], *this);
   }
 
-  playList = skin.getSelectionList(slKey, *this);
+  listView = skin.getSelectionList(slKey, *this);
 
   updateTimer = new QTimer(this);
 
@@ -59,10 +54,10 @@ void AudioPlayerScreen::init() {
   connect(buttons[LIST], SIGNAL(clicked()), this, SLOT(hide()) );
   connect(buttons[EXIT], SIGNAL(clicked()), menu, SLOT(show()) );
   connect(buttons[EXIT], SIGNAL(clicked()), this, SLOT(hide()) );
-  connect(buttons[DOWN], SIGNAL(clicked()), playList, SLOT(scrollDown()));
-  connect(buttons[UP], SIGNAL(clicked()), playList, SLOT(scrollUp()));
-  connect(buttons[PGDOWN], SIGNAL(clicked()), playList,SLOT(scrollPageDown()));
-  connect(buttons[PGUP], SIGNAL(clicked()), playList, SLOT(scrollPageUp()));
+  connect(buttons[DOWN], SIGNAL(clicked()), listView, SLOT(scrollDown()));
+  connect(buttons[UP], SIGNAL(clicked()), listView, SLOT(scrollUp()));
+  connect(buttons[PGDOWN], SIGNAL(clicked()), listView,SLOT(scrollPageDown()));
+  connect(buttons[PGUP], SIGNAL(clicked()), listView, SLOT(scrollPageUp()));
   connect(buttons[PLAY], SIGNAL(clicked()), this, SLOT(play()) );
   connect(buttons[STOP], SIGNAL(clicked()), this, SLOT(stop()) );
   connect(buttons[PREV], SIGNAL(clicked()), this, SLOT(previous()) );
@@ -71,26 +66,28 @@ void AudioPlayerScreen::init() {
   connect(buttons[VOLDN], SIGNAL(clicked()), mediaPlayer, SLOT(volumeDown()) );
   connect(buttons[MUTE], SIGNAL(clicked()), mediaPlayer, SLOT(volumeMute()) );
   connect(buttons[VISU], SIGNAL(clicked()), mediaPlayer, SLOT(showAsVis()) );
-  connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(savePlayList()) );
-  connect(audioBrowser, SIGNAL(fileSelected(const QString&)), 
-	  this, SLOT(addFileToPlayList(const QString&)));
+  connect(audioBrowser, SIGNAL(folderSelected(QString&, bool, int)), 
+	  this, SLOT(loadFolder(QString&, bool, int)));
   connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateInfo()));
   updateTimer->changeInterval(500);
-  loadPlayList();
+
+  loadFolder(appState->folderPath, appState->folderPlus, appState->folderIndex);
+  play();
+//  listView->setCurrentItem(appState->folderIndex);
 }
 
 void AudioPlayerScreen::play()
 {
-  int index = playList->currentItem();
-  if (playList->count() == 0)
+  int index = listView->currentItem();
+  if (listView->count() == 0)
     return;
   if (index == -1) {
-    playList->setCurrentItem(0);
+    listView->setCurrentItem(0);
     index = 0;
   }
-  MediaItem *mi = (MediaItem *)(playList->item(index));
-  mediaPlayer->open(*mi);
+  mediaPlayer->open(playList[index]);
   mediaPlayer->play();
+  appState->folderIndex = index;
 }
 
 void AudioPlayerScreen::stop()
@@ -101,7 +98,7 @@ void AudioPlayerScreen::stop()
 
 void AudioPlayerScreen::previous()
 {
-  playList->scrollUp();
+  listView->scrollUp();
   if (mediaPlayer->isPlaying()) {
     stop();
     play();
@@ -110,7 +107,7 @@ void AudioPlayerScreen::previous()
 
 void AudioPlayerScreen::next()
 {
-  if (!playList->scrollDown())
+  if (!listView->scrollDown())
     return;
   
   if (mediaPlayer->isPlaying()) {
@@ -124,52 +121,26 @@ void AudioPlayerScreen::endOfStreamReached()
   next();
 }
 
-void AudioPlayerScreen::loadPlayList()
+void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index)
 {
-  QSqlQuery q( QString(QUERY_PLAYLIST) );
-  if (q.isActive()) {
-    while (q.next()) {
-      addMRLToPlayList(q.value(0).toString());
-    }      
+  QString p = path;
+  if (path.isNull()) {
+    // if the path is null, load first folder in database
+    p = dbHandler->getKeyForId(1);
+    plus = false;
   }
-}
+  dbHandler->loadMusicList(p, plus, playList);
 
-void AudioPlayerScreen::savePlayList()
-{
-  QSqlQuery query;
-  
-  query.prepare( DROP_PLAYLIST );
-  query.exec();
-  query.prepare( CREATE_PLAYLIST );
-  query.exec();
-    
-  MediaItem *mi;
-  for (uint i=0; i<playList->count(); i++) {
-    mi = (MediaItem *)(playList->item(i));
-    query.prepare( INSERT_PLAYLIST );
-    query.bindValue(":mrl",mi->mrl().latin1());
-    query.exec();
+  listView->clear();
+  int size = playList.size();
+  for (int i=0; i<size; i++) {
+    listView->insertItem(playList[i].title());
   }
-}
 
-void AudioPlayerScreen::addMRLToPlayList(const QString &mrl)
-{
-  QSqlQuery q( QString(QUERY_MUSIC_ITEM) + "where mrl='" + mrl + "'" );
-  if (q.isActive()) {
-    if (q.next()) {
-      MediaItem *mi = new MediaItem(mrl, 
-				    q.value(0).toString(),
-				    q.value(1).toString(),
-				    q.value(2).toString(),
-				    q.value(3).toString());
-      playList->insertItem(mi);
-    }
-  }
-}
-
-void AudioPlayerScreen::addFileToPlayList(const QString &file)
-{
-  addMRLToPlayList(QString(file).prepend("file://"));
+  listView->setCurrentItem(index);
+  appState->folderPath = p;
+  appState->folderPlus = plus;
+  appState->folderIndex = index;
 }
 
 void AudioPlayerScreen::updateInfo()

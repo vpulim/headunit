@@ -2,6 +2,7 @@
 #define AUDIO_BROWSER_SCREEN_H
 
 #include "Screen.h"
+#include "MediaList.h"
 
 class Button;
 class SelectionList;
@@ -16,20 +17,21 @@ class AudioBrowserScreen : public FunctionScreen
  private slots:
   void highlight(int);  
   void select(int);
-  void selectHighlighted();
+  void selectFolder();
+  void selectFolderPlus();
 
  signals:
-  void fileSelected(const QString &file);
+  void folderSelected(QString &path, bool plus, int index);
 
  private:
   void setDir(const QString &path);
 
   enum {SELECT, PLUS, BACK, BROWSE, EXIT, PGDOWN, DOWN, UP, PGUP, NUM_BUTTONS};
   Button *buttons[NUM_BUTTONS];
-  SelectionList *fileList;
+  MediaList musicList;
+  SelectionList *listView;
   static const char *buttonKeys[NUM_BUTTONS];
   static const char *slKey;
-  QString audioFileFilter;
   QString rootDir;
   QString currDir;
 };

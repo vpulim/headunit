@@ -10,6 +10,7 @@ extern class AudioBrowserScreen *audioBrowser;
 extern class MediaPlayer *mediaPlayer;
 extern class ConfigDialog *configDialog;
 extern class DBHandler *dbHandler;
+extern class ApplicationState *appState;
 extern class QSettings settings;
 	
 QString getMediaPath(void);

@@ -682,7 +682,7 @@
     <signal>synchRequested(QString&amp; musicPath, QString&amp; videoPath, QString&amp; extList)</signal>
 </signals>
 <slots>
-    <slot>currentStatus( int numFiles, QString &amp; path )</slot>
+    <slot>currentStatus( int numFiles, const QString &amp; path )</slot>
     <slot access="private">menuSelect( int item )</slot>
     <slot access="private">musicBrowseClicked()</slot>
     <slot access="private">videoBrowseClicked()</slot>

@@ -220,7 +220,7 @@ void MediaPlayer::showAsDVD()
 	if (basicAudio) {
 	  basicAudio->put_Volume(volume*100 - 10000);
 	}
-	MediaItem mi("dvd://", "", "", "DVD", "");
+	MediaItem mi(-1, "", "", "DVD", "", "dvd://");
 	openedItem = mi;
   }
   play();

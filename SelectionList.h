@@ -8,8 +8,11 @@ class SelectionList : public QListBox
   Q_OBJECT
  public:
   SelectionList( QWidget *parent, const char *name );
+  void insertDir(QString dir);
+  bool isDir(int index);
+  QString dir(int index);
 
- public slots:
+public slots:
   bool scrollUp();
   bool scrollDown();
   bool scrollPageUp();

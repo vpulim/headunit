@@ -1,36 +1,36 @@
 #ifndef MEDIA_ITEM_H
 #define MEDIA_ITEM_H
 
-#include <qlistbox.h>
+#include <qstring.h>
 
-class MediaItem : public QListBoxText
+class MediaItem
 {
  public:
   MediaItem();
-  MediaItem(const QString &mrl, 
+  MediaItem(int id,
 	    const QString &artist,
 	    const QString &album,
 	    const QString &title,
 	    const QString &genre,
-	    QListBox *listbox = 0);
+      const QString &mrl); 
   MediaItem &operator= (const MediaItem &m);
-  QString text() const;  
-  QString mrl() const { return _mrl; };
+  int id() const { return _id; };
   QString artist() const { return _artist; };
   QString album() const { return _album; };
   QString title() const { return _title; };
   QString genre() const { return _genre; };
+  QString mrl() const { return _mrl; };
   bool isNull() { return _mrl.isNull(); };
 
   static const MediaItem null;
 
  private:
-  QString _mrl;
+  int _id;
   QString _artist;
   QString _album;
   QString _title;
   QString _genre;
-  QListBox *_listbox;
+  QString _mrl;
 };
 
 #endif

@@ -10,6 +10,7 @@
 #include "MediaPlayer.h"
 #include "DBHandler.h"
 #include "ConfigDialog.h"
+#include "ApplicationState.h"
 
 MenuScreen *menu;
 AudioPlayerScreen *audioPlayer;
@@ -17,22 +18,26 @@ AudioBrowserScreen *audioBrowser;
 MediaPlayer *mediaPlayer;
 ConfigDialog *configDialog;
 DBHandler *dbHandler;
+ApplicationState *appState;
 QSettings settings;
 
 #define ERROR 1
 
-QString getMediaPath(void)
-{
-    return settings.readEntry(QString("headunit/mediapath"));
-}
-
 int initializeGui(void)
 {
+  configDialog = new ConfigDialog();
+  appState = new ApplicationState();
+  dbHandler=new DBHandler(); 
+  if (dbHandler->isEmpty())
+	configDialog->exec();
+  dbHandler->loadAppState();
+  QObject::connect(qApp, SIGNAL(aboutToQuit()), dbHandler, SLOT(saveAppState()) );
+
   menu = new MenuScreen();
   audioPlayer = new AudioPlayerScreen();
   audioBrowser = new AudioBrowserScreen();
   mediaPlayer = new MediaPlayer();
-  
+
   menu->init();
   audioPlayer->init();
   audioBrowser->init();
@@ -56,13 +61,6 @@ int main( int argc, char **argv )
 
   settings.setPath( "mp3car", "headunit" );
 
-  configDialog = new ConfigDialog();
-  dbHandler=new DBHandler();
-  if (dbHandler->isEmpty())
-	  configDialog->exec();
-  
-  Q_CHECK_PTR(dbHandler);
-  
   if (initializeGui()==ERROR)
       return ERROR;
   

@@ -19,7 +19,10 @@ HEADERS	+= AudioBrowserScreen.h \
 	Skin.h \
 	VideoPanel.h \
 	VisPanel.h \
-	DBHandler.h
+	DBHandler.h \
+        MediaList.h \
+        ApplicationState.h
+
 SOURCES	+= AudioBrowserScreen.cpp \
 	AudioPlayerScreen.cpp \
 	Button.cpp \
@@ -34,11 +37,12 @@ SOURCES	+= AudioBrowserScreen.cpp \
 	Skin.cpp \
 	VideoPanel.cpp \
 	VisPanel.cpp \
-	DBHandler.cpp
+	DBHandler.cpp 
+
 FORMS	= ConfigDialog.ui
 
 win32 {
-  CONFIG  += console   # Comment out this line to disable debug output
+  CONFIG  += console   # Comment out this line to disable console window
   SOURCES += DirectShowMediaPlayer.cpp
   INCLUDEPATH += d:/DX90SDK/Include
   LIBPATH += d:/DX90SDK/Lib

@@ -6,6 +6,7 @@ SelectionList::SelectionList( QWidget *parent, const char *name )
   setVScrollBarMode(AlwaysOff);
   setHScrollBarMode(AlwaysOff);
   setFont(QFont());
+//  setStaticBackground(true);
 }
 
 bool SelectionList::scrollUp()
@@ -54,4 +55,18 @@ bool SelectionList::scrollPageDown()
 void SelectionList::fontChange(const QFont &oldFont)
 {
   itemHeight = font().pointSize();
+}
+
+void SelectionList::insertDir(QString dir) {
+  dir.prepend('[').append(']');
+  insertItem(dir);
+}
+
+bool SelectionList::isDir(int index) {
+  return text(index).at(0) == '[';
+}
+
+QString SelectionList::dir(int index) {
+  QString dir = text(index);
+  return dir.mid(1,dir.length()-2);
 }
