@@ -2,7 +2,7 @@
 Name "HeadUnit"
 
 ; The file to write
-OutFile "headunit-0.2.exe"
+OutFile "headunit-0.3.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\HeadUnit
