@@ -34,6 +34,9 @@ Panel::Panel(QWidget *parent)
   connect(buttons[PREV], SIGNAL(released()), this, SLOT(prevReleased()) );
   connect(buttons[NEXT], SIGNAL(pressed()), this, SLOT(nextPressed()) );
   connect(buttons[NEXT], SIGNAL(released()), this, SLOT(nextReleased()) );
+  connect(buttons[VOLUP], SIGNAL(clicked()), parent, SLOT(volumeUp()) );
+  connect(buttons[VOLDN], SIGNAL(clicked()), parent, SLOT(volumeDown()) );
+  connect(buttons[MUTE], SIGNAL(clicked()), parent, SLOT(volumeMute()) );
 
   diff = 0;
   valid = true;
@@ -58,7 +61,10 @@ void Panel::updateInfo()
     return;
   long pos = 0, len = 0;
   if (mediaPlayer->isPlaying() && mediaPlayer->getPosition(&pos,&len)) {
-    appState->videoPos = pos;
+    if (mediaPlayer->isVideo())
+      appState->videoPos = pos;
+    else if (mediaPlayer->isAudio()) 
+      appState->musicPos = pos;
   }
   QTime zero;
   labels[TRACKNAME]->setText(mediaPlayer->getOpened().displayText());

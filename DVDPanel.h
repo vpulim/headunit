@@ -14,6 +14,7 @@ class DVDPanel : public Panel
   bool previous();
   bool next();
   void playpause();
+  void stop();
 };
 
 #endif

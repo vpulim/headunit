@@ -58,7 +58,7 @@ class DBHandler : public QObject {
   void saveStateValue(const char *var, const char *value) { saveStateValue(QString(var), QString(value)); };
   void saveStateValue(const char *var, const QString& value) { saveStateValue(QString(var), value); };
   void saveAlbumArt(QString& key, QPixmap& image);
-  QString firstFolderByPath(QString& path);
+  QString firstFolderByPath(QString path);
 
  public:
   DBHandler();

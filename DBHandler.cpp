@@ -40,15 +40,19 @@ void DBHandler::loadAppState()
   appState->musicPath = loadStateValue( "musicPath" );
   appState->musicPlus = loadStateValue( "musicPlus" , "0").toInt();
   appState->musicIndex = loadStateValue( "musicIndex" , "0").toInt();
-  appState->musicPos = loadStateValue( "musicPos", "0").toLong();
+  appState->musicPos = loadStateValue( "musicPos", "-1").toLong();
   appState->videoPath = loadStateValue( "videoPath" );
   appState->videoIndex = loadStateValue( "videoIndex" , "0").toInt();
-  appState->videoPos = loadStateValue( "videoPos", "0").toLong();
+  appState->videoPos = loadStateValue( "videoPos", "-1").toLong();
+  appState->dvdTitle = loadStateValue( "dvdTitle", "0").toLong();
+  appState->dvdChapter = loadStateValue( "dvdChapter", "0").toLong();
+  appState->dvdPos = loadStateValue( "dvdPos", "-1").toLong();
   appState->playMode = loadStateValue( "playMode", "0").toInt();
   appState->volume = loadStateValue( "volume", "50").toInt();
   appState->function = loadStateValue( "function", "0").toInt();
   if ((appState->function==ApplicationState::MUSIC && appState->musicPos<0) ||
-      (appState->function==ApplicationState::VIDEO && appState->videoPos<0))
+      (appState->function==ApplicationState::VIDEO && appState->videoPos<0) ||
+      (appState->function==ApplicationState::DVD && appState->dvdPos<0))
     appState->function = ApplicationState::NONE;
 }
 
@@ -64,6 +68,9 @@ void DBHandler::saveAppState()
   saveStateValue( "videoPath", appState->videoPath );
   saveStateValue( "videoIndex", QString::number(appState->videoIndex) );
   saveStateValue( "videoPos", QString::number(appState->videoPos) );
+  saveStateValue( "dvdTitle", QString::number(appState->dvdTitle) );
+  saveStateValue( "dvdChapter", QString::number(appState->dvdChapter) );
+  saveStateValue( "dvdPos", QString::number(appState->dvdPos) );
   saveStateValue( "playMode", QString::number(appState->playMode) );
   saveStateValue( "volume", QString::number(appState->volume) );
   saveStateValue( "function", QString::number(appState->function) );
@@ -223,7 +230,7 @@ MediaItem DBHandler::loadMediaItem(int id)
   return mi;
 }
 
-QString DBHandler::firstFolderByPath(QString& path)
+QString DBHandler::firstFolderByPath(QString path)
 {
   QSqlQuery q;
   q.prepare(QUERY_MEDIA_ITEM_BY_KEY);

@@ -54,10 +54,12 @@ class MediaPlayer : public FunctionScreen
   void showAsVis();
   void showAsVideo();
   void showAsDVD();
+  void display() { erase(); FunctionScreen::display(); };
 
  protected:
   void moveEvent ( QMoveEvent * );
   void resizeEvent ( QResizeEvent * );
+  void mouseMoveEvent ( QMouseEvent * );
   void mouseReleaseEvent ( QMouseEvent * );
   void keyPressEvent ( QKeyEvent * );
 

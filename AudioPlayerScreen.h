@@ -5,7 +5,7 @@
 #include "Screen.h"
 #include "MediaList.h"
 
-#define UPDATE_DELAY 100
+#define UPDATE_DELAY 500
 #define SLOW_SEEK_DELAY 400
 #define SLOW_SEEK_MSECS 1000
 #define MED_SEEK_DELAY 4000

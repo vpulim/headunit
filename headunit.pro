@@ -54,6 +54,8 @@ win32 {
 }
 
 unix {
-  SOURCES += XineMediaPlayer.cpp
+  DEFINES += QT_THREAD_SUPPORT
+  HEADERS += qxinewidget.h
+  SOURCES += XineMediaPlayer.cpp qxinewidget.cpp
   LIBS += `xine-config --libs` -lid3
 }

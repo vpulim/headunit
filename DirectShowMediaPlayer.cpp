@@ -239,15 +239,17 @@ void MediaPlayer::volumeMute()
 void MediaPlayer::showAsVis()
 {
   activePanel = visPanel;
-  panel_on = true;
+  panel_on = false;
   display();
-  visPanel->display();    
+  dvdPanel->lower();
+  videoPanel->lower();
+  visPanel->lower();    
 }
 
 void MediaPlayer::showAsDVD() 
 {
   activePanel = dvdPanel;
-  panel_on = true;
+  panel_on = false;
   closeItem();
 
   if (FAILED(CoCreateInstance(CLSID_DvdGraphBuilder, NULL, 
@@ -301,15 +303,19 @@ void MediaPlayer::showAsDVD()
   openedItem = dvd;
   play();
   display();
-  dvdPanel->display();    
+  dvdPanel->lower();
+  videoPanel->lower();
+  visPanel->lower();    
 }
 
 void MediaPlayer::showAsVideo() 
 {
   activePanel = videoPanel;
   display();
-  videoPanel->display();    
-  panel_on = true;
+  videoPanel->lower();    
+  visPanel->lower();    
+  dvdPanel->lower();    
+  panel_on = false;
 }
 
 void MediaPlayer::dvdPause() 
@@ -338,8 +344,9 @@ bool MediaPlayer::dvdNextChapter()
       long pos, len;
       dvdGetLocation(&title,&ch,&pos,&len);
       if (title == 0)
-	dvdControl->PlayTitle(1, dwFlags, NULL);
+	result = dvdControl->PlayTitle(1, dwFlags, NULL);
     }
+    return !FAILED(result);
   }
   return false;
 }
@@ -379,11 +386,8 @@ void MediaPlayer::dvdGetLocation(int *title, int *chapter,
 
 void MediaPlayer::moveEvent ( QMoveEvent *e ) 
 {
-  if (dvdControl) {
-    POINT pt = { e->pos().x(), e->pos().y() };
-    if (dvdControl->SelectAtPosition(pt) == S_OK)
-      return;
-  }
+  xpos = e->pos().x();
+  ypos = e->pos().y();
 }
 
 void MediaPlayer::resizeEvent ( QResizeEvent *e ) 
@@ -395,18 +399,28 @@ void MediaPlayer::resizeEvent ( QResizeEvent *e )
   videoPanel->move(0,e->size().height() - videoPanel->size().height());
 }
 
+void MediaPlayer::mouseMoveEvent ( QMouseEvent *e ) 
+{
+  if (dvdControl) {
+    POINT pt = { e->pos().x(), e->pos().y() };
+    if (dvdControl->SelectAtPosition(pt) == S_OK)
+      return;
+  }
+}
+
 void MediaPlayer::mouseReleaseEvent ( QMouseEvent * e )
 {
+  bool old_state = panel_on;
+  if (panel_on) {
+    activePanel->lower();
+    panel_on = false;
+  }
   if (dvdControl) {
     POINT pt = { e->pos().x(), e->pos().y() };
     if (dvdControl->ActivateAtPosition(pt) == S_OK)
       return;
   }
-  if (panel_on) {
-    activePanel->lower();
-    panel_on = false;
-  }
-  else {
+  if (!old_state) {
     activePanel->display();
     panel_on = true;
   }

@@ -11,6 +11,9 @@ class ApplicationState
     QString videoPath;
     int videoIndex;
     long videoPos;
+    int dvdTitle;
+    int dvdChapter;
+    long dvdPos;
     int playMode;
     int volume;
     int function;

@@ -4,7 +4,10 @@
 #include <qdatetime.h>
 #include "Screen.h"
 
+#ifndef UPDATE_DELAY
 #define UPDATE_DELAY 100
+#endif
+
 #define SLOW_SEEK_DELAY 400
 #define SLOW_SEEK_MSECS 1000
 #define MED_SEEK_DELAY 4000

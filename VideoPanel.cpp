@@ -11,7 +11,7 @@
 VideoPanel::VideoPanel(QWidget *parent) 
   : Panel(parent)
 {
-  connect( buttons[PLAY], SIGNAL(clicked()), this, SLOT(play()) );
+  connect( buttons[PLAY], SIGNAL(clicked()), this, SLOT(playpause()) );
   connect( buttons[STOP], SIGNAL(clicked()), this, SLOT(stop()) );
   connect( buttons[EXIT], SIGNAL(clicked()), parent, SLOT(lower()) );
   connect( buttons[LIST], SIGNAL(clicked()), videoBrowser, SLOT(display()) );  
@@ -27,18 +27,18 @@ void VideoPanel::init()
 
 void VideoPanel::display() 
 {
+  bool wasVideo = appState->function == ApplicationState::VIDEO;
   appState->function = ApplicationState::VIDEO;
-  if (mediaPlayer->isPlaying()) {
-    if (!mediaPlayer->isVideo()) {
+  if (!mediaPlayer->isVideo()) {
+    if (mediaPlayer->isOpened())
       mediaPlayer->closeItem();
-      loadFolder(appState->videoPath, FALSE, appState->videoIndex,
-		 appState->videoPos);
-    }
+    loadFolder(appState->videoPath, FALSE, appState->videoIndex,
+	       appState->videoPos);
   }
-  else {
+  if (!mediaPlayer->isPlaying())
     play();
-  }
-  Panel::display();
+  if (wasVideo)
+    Panel::display();
 }
 
 void VideoPanel::loadFolder(QString& path, bool plus, int index, long pos)
@@ -69,6 +69,16 @@ void VideoPanel::play()
   }
   mediaPlayer->openItem(playList[appState->videoIndex]);
   mediaPlayer->play();
+}
+
+void VideoPanel::playpause()
+{
+  if (mediaPlayer->isPlaying())
+    mediaPlayer->pause();
+  else if (mediaPlayer->isPaused())
+    mediaPlayer->play();
+  else
+    play();
 }
 
 void VideoPanel::stop()

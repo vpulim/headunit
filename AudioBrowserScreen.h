@@ -13,7 +13,7 @@ class AudioBrowserScreen : public FunctionScreen
   Q_OBJECT
  public:
   AudioBrowserScreen(QWidget* parent = 0);
-  AudioBrowserScreen(QString& name, QWidget* parent = 0)
+  AudioBrowserScreen(QString name, QWidget* parent = 0)
     :FunctionScreen(name, parent) {};
   void init();
 

@@ -59,6 +59,9 @@ int initializeGui()
   case ApplicationState::VIDEO:
     mediaPlayer->showAsVideo();
     break;
+  case ApplicationState::DVD:
+    mediaPlayer->showAsDVD();
+    break;
   default:
     break;
   }

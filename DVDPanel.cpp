@@ -5,12 +5,13 @@
 #include "MediaPlayer.h"
 #include "DVDPanel.h"
 #include "Button.h"
+#include "ApplicationState.h"
 
 DVDPanel::DVDPanel(QWidget *parent) 
   : Panel(parent)
 {
   connect( buttons[PLAY], SIGNAL(clicked()), this, SLOT(playpause()) );
-  connect( buttons[STOP], SIGNAL(clicked()), parent, SLOT(stop()) );
+  connect( buttons[STOP], SIGNAL(clicked()), this, SLOT(stop()) );
   connect( buttons[EXIT], SIGNAL(clicked()), parent, SLOT(lower()) );
 }
 
@@ -22,6 +23,12 @@ void DVDPanel::playpause()
     mediaPlayer->dvdResume();
   else
     mediaPlayer->play();
+}
+
+void DVDPanel::stop()
+{
+  mediaPlayer->stop();
+  appState->dvdPos = -1;  
 }
 
 bool DVDPanel::next() 
@@ -43,13 +50,17 @@ void DVDPanel::updateInfo()
   long pos, len;
   mediaPlayer->dvdGetLocation(&title, &ch, &pos, &len);
   if (mediaPlayer->isPlaying()) {
-    //    appState->videoPos = pos;
+    appState->dvdPos = pos;
+    appState->dvdTitle = title;
+    appState->dvdChapter = ch;
   }
   QTime zero;
   if (title == 0)
-    labels[TRACKNAME]->setText(QString("DVD: Main Menu"));
+    labels[TRACKNAME]->setText(QString("DVD: Menu"));
   else
-    labels[TRACKNAME]->setText(QString("DVD: Chapter ")+QString::number(ch));
+    labels[TRACKNAME]->setText(QString("DVD: Title %1, Chapter %2")
+			       .arg(title)
+			       .arg(ch));
   labels[CURRENTTRACKTIME]->setText(zero.addMSecs(pos).toString("hh:mm"));
   labels[TRACKTIME]->setText(zero.addMSecs(len).toString("hh:mm"));
   labels[TIME]->setText(QTime::currentTime().toString("hh:mm:ss"));

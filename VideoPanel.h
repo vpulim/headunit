@@ -15,6 +15,7 @@ class VideoPanel : public Panel
   void display();   
   void loadFolder(QString& path, bool plus, int index, long pos);
   void play();
+  void playpause();
   void stop();
   bool previous();
   bool next();

@@ -281,6 +281,8 @@ void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index, long pos
 
 void AudioPlayerScreen::updateInfo()
 {
+  if (!mediaPlayer->isAudio())
+    return;  
   long pos = 0, len = 0;
   if (mediaPlayer->isPlaying() && mediaPlayer->getPosition(&pos,&len)) {
     appState->musicPos = pos;
