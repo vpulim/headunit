@@ -18,6 +18,9 @@
     <property name="sizeGripEnabled">
         <bool>true</bool>
     </property>
+    <property name="modal">
+        <bool>true</bool>
+    </property>
     <widget class="QLayoutWidget">
         <property name="name">
             <cstring>Layout1</cstring>
@@ -104,46 +107,6 @@
             </widget>
         </hbox>
     </widget>
-    <widget class="QListBox">
-        <item>
-            <property name="text">
-                <string>Database</string>
-            </property>
-            <property name="pixmap">
-                <pixmap>image0</pixmap>
-            </property>
-        </item>
-        <item>
-            <property name="text">
-                <string>Appearance</string>
-            </property>
-            <property name="pixmap">
-                <pixmap>image1</pixmap>
-            </property>
-        </item>
-        <property name="name">
-            <cstring>listMenu</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>11</x>
-                <y>11</y>
-                <width>110</width>
-                <height>309</height>
-            </rect>
-        </property>
-        <property name="sizePolicy">
-            <sizepolicy>
-                <hsizetype>0</hsizetype>
-                <vsizetype>7</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-            </sizepolicy>
-        </property>
-        <property name="currentItem">
-            <number>0</number>
-        </property>
-    </widget>
     <widget class="QTabWidget">
         <property name="name">
             <cstring>tabSkin</cstring>
@@ -226,6 +189,14 @@
                         <height>161</height>
                     </rect>
                 </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>5</hsizetype>
+                        <vsizetype>5</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
                 <property name="frameShape">
                     <enum>Box</enum>
                 </property>
@@ -247,6 +218,46 @@
                 </property>
             </widget>
         </widget>
+    </widget>
+    <widget class="QListBox">
+        <item>
+            <property name="text">
+                <string>Database</string>
+            </property>
+            <property name="pixmap">
+                <pixmap>image0</pixmap>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Appearance</string>
+            </property>
+            <property name="pixmap">
+                <pixmap>image1</pixmap>
+            </property>
+        </item>
+        <property name="name">
+            <cstring>listMenu</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>11</y>
+                <width>110</width>
+                <height>309</height>
+            </rect>
+        </property>
+        <property name="sizePolicy">
+            <sizepolicy>
+                <hsizetype>0</hsizetype>
+                <vsizetype>7</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+            </sizepolicy>
+        </property>
+        <property name="currentItem">
+            <number>0</number>
+        </property>
     </widget>
     <widget class="QTabWidget">
         <property name="name">
@@ -300,57 +311,6 @@
                 </property>
                 <property name="text">
                     <string>...</string>
-                </property>
-            </widget>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>buttonSyncDB</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>80</x>
-                        <y>90</y>
-                        <width>100</width>
-                        <height>25</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Synch Database</string>
-                </property>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>labelProgress</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>30</x>
-                        <y>180</y>
-                        <width>80</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Progress:</string>
-                </property>
-                <property name="alignment">
-                    <set>AlignVCenter|AlignRight</set>
-                </property>
-            </widget>
-            <widget class="QProgressBar">
-                <property name="name">
-                    <cstring>progressBar1</cstring>
-                </property>
-                <property name="enabled">
-                    <bool>false</bool>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>121</x>
-                        <y>180</y>
-                        <width>220</width>
-                        <height>22</height>
-                    </rect>
                 </property>
             </widget>
             <widget class="QLineEdit">
@@ -430,7 +390,7 @@
                 <property name="geometry">
                     <rect>
                         <x>30</x>
-                        <y>150</y>
+                        <y>120</y>
                         <width>80</width>
                         <height>21</height>
                     </rect>
@@ -442,26 +402,122 @@
                     <set>AlignVCenter|AlignRight</set>
                 </property>
             </widget>
-            <widget class="QLabel">
+            <widget class="QPushButton">
                 <property name="name">
-                    <cstring>valueNumSynched</cstring>
+                    <cstring>buttonSyncDB</cstring>
                 </property>
                 <property name="geometry">
                     <rect>
-                        <x>120</x>
-                        <y>150</y>
+                        <x>80</x>
+                        <y>80</y>
+                        <width>100</width>
+                        <height>25</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Synch Database</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>textLabel1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>103</x>
+                        <y>185</y>
                         <width>50</width>
                         <height>20</height>
                     </rect>
                 </property>
-                <property name="backgroundMode">
-                    <enum>PaletteBackground</enum>
+                <property name="text">
+                    <string>textLabel1</string>
+                </property>
+            </widget>
+            <widget class="QTextEdit">
+                <property name="name">
+                    <cstring>textPaths</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>40</x>
+                        <y>140</y>
+                        <width>330</width>
+                        <height>140</height>
+                    </rect>
+                </property>
+                <property name="hScrollBarMode">
+                    <enum>AlwaysOff</enum>
+                </property>
+                <property name="linkUnderline">
+                    <bool>false</bool>
+                </property>
+                <property name="wordWrap">
+                    <enum>NoWrap</enum>
+                </property>
+                <property name="undoDepth">
+                    <number>0</number>
+                </property>
+                <property name="undoRedoEnabled">
+                    <bool>false</bool>
+                </property>
+                <property name="autoFormatting">
+                    <set>AutoNone</set>
+                </property>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>checkShowFiles</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>300</x>
+                        <y>120</y>
+                        <width>70</width>
+                        <height>20</height>
+                    </rect>
                 </property>
                 <property name="text">
-                    <string>0</string>
+                    <string>Show files</string>
                 </property>
-                <property name="alignment">
-                    <set>AlignVCenter|AlignLeft</set>
+            </widget>
+            <widget class="QLCDNumber">
+                <property name="name">
+                    <cstring>lcdNumFiles</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>110</x>
+                        <y>118</y>
+                        <width>40</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>3</hsizetype>
+                        <vsizetype>1</vsizetype>
+                        <horstretch>30</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+                <property name="frameShape">
+                    <enum>NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                    <enum>Plain</enum>
+                </property>
+                <property name="lineWidth">
+                    <number>0</number>
+                </property>
+                <property name="smallDecimalPoint">
+                    <bool>true</bool>
+                </property>
+                <property name="numDigits">
+                    <number>4</number>
+                </property>
+                <property name="segmentStyle">
+                    <enum>Flat</enum>
                 </property>
             </widget>
         </widget>
@@ -518,26 +574,6 @@
                 </property>
             </widget>
             <widget class="QListBox">
-                <item>
-                    <property name="text">
-                        <string>mp3</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>wma</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>mpg</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>avi</string>
-                    </property>
-                </item>
                 <property name="name">
                     <cstring>listExtensions</cstring>
                 </property>
@@ -550,7 +586,7 @@
                     </rect>
                 </property>
                 <property name="currentItem">
-                    <number>0</number>
+                    <number>-1</number>
                 </property>
             </widget>
         </widget>
@@ -569,7 +605,7 @@
         <sender>buttonOk</sender>
         <signal>clicked()</signal>
         <receiver>ConfigDialog</receiver>
-        <slot>accept()</slot>
+        <slot>okClicked()</slot>
     </connection>
     <connection>
         <sender>buttonCancel</sender>
@@ -584,6 +620,18 @@
         <slot>menuSelect(int)</slot>
     </connection>
     <connection>
+        <sender>buttonAdd</sender>
+        <signal>clicked()</signal>
+        <receiver>ConfigDialog</receiver>
+        <slot>extAddClicked()</slot>
+    </connection>
+    <connection>
+        <sender>buttonRemove</sender>
+        <signal>clicked()</signal>
+        <receiver>ConfigDialog</receiver>
+        <slot>extRemoveClicked()</slot>
+    </connection>
+    <connection>
         <sender>buttonMusicBrowse</sender>
         <signal>clicked()</signal>
         <receiver>ConfigDialog</receiver>
@@ -596,22 +644,43 @@
         <slot>videoBrowseClicked()</slot>
     </connection>
     <connection>
-        <sender>buttonAdd</sender>
+        <sender>buttonSyncDB</sender>
         <signal>clicked()</signal>
         <receiver>ConfigDialog</receiver>
-        <slot>extAddClicked()</slot>
+        <slot>synchDBClicked()</slot>
     </connection>
     <connection>
-        <sender>buttonRemove</sender>
+        <sender>checkShowFiles</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textPaths</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>listBoxSkins</sender>
+        <signal>highlighted(int)</signal>
+        <receiver>ConfigDialog</receiver>
+        <slot>skinSelect(int)</slot>
+    </connection>
+    <connection>
+        <sender>buttonSkin</sender>
         <signal>clicked()</signal>
         <receiver>ConfigDialog</receiver>
-        <slot>extRemoveClicked()</slot>
+        <slot>setSkinClicked()</slot>
     </connection>
 </connections>
 <includes>
-    <include location="local" impldecl="in implementation">qfiledialog.h</include>
+    <include location="local" impldecl="in declaration">qfiledialog.h</include>
+    <include location="local" impldecl="in declaration">qsettings.h</include>
+    <include location="local" impldecl="in declaration">DBHandler.h</include>
+    <include location="local" impldecl="in declaration">qpixmap.h</include>
     <include location="local" impldecl="in implementation">ConfigDialog.ui.h</include>
 </includes>
+<variables>
+    <variable access="private">DBHandler *db;</variable>
+</variables>
+<signals>
+    <signal>synchRequested(QString&amp; musicPath, QString&amp; videoPath, QString&amp; extList)</signal>
+</signals>
 <slots>
     <slot>currentStatus( int numFiles, QString &amp; path )</slot>
     <slot access="private">menuSelect( int item )</slot>
@@ -619,6 +688,13 @@
     <slot access="private">videoBrowseClicked()</slot>
     <slot access="private">extAddClicked()</slot>
     <slot access="private">extRemoveClicked()</slot>
+    <slot access="private">synchDBClicked()</slot>
+    <slot access="private">okClicked()</slot>
+    <slot access="private">skinSelect( int item )</slot>
+    <slot access="private">setSkinClicked()</slot>
 </slots>
+<functions>
+    <function access="private" specifier="non virtual">init()</function>
+</functions>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -26,27 +26,8 @@ QString getMediaPath(void)
     return settings.readEntry(QString("headunit/mediapath"));
 }
 
-QString askMediaPath(void)
-{
-    QString mediaPath = 
-      QFileDialog::getExistingDirectory(getMediaPath(),0,
-					"get media path",
-					"Choose location of media files:",
-					TRUE);
-    qWarning("writing setting: %s", mediaPath.latin1());
-    return mediaPath;
-}
-
-void setMediaPath(QString path)
-{
-    if (path == QString::null)
-	return;
-    settings.writeEntry(QString("headunit/mediapath"), path);
-}
-
 int initializeGui(void)
 {
-  configDialog = new ConfigDialog();
   menu = new MenuScreen();
   audioPlayer = new AudioPlayerScreen();
   audioBrowser = new AudioBrowserScreen();
@@ -75,13 +56,12 @@ int main( int argc, char **argv )
 
   settings.setPath( "mp3car", "headunit" );
 
+  configDialog = new ConfigDialog();
   dbHandler=new DBHandler();
+  if (dbHandler->isEmpty())
+	  configDialog->exec();
   
   Q_CHECK_PTR(dbHandler);
-  
-  if (getMediaPath() == QString::null) {
-    setMediaPath(askMediaPath());
-  }
   
   if (initializeGui()==ERROR)
       return ERROR;

@@ -30,7 +30,7 @@ AudioBrowserScreen::AudioBrowserScreen() : FunctionScreen("AudioBrowser")
 
   audioFileFilter = "*";
   fileList = skin.getSelectionList(slKey, *this);
-  rootDir = settings.readEntry( "headunit/mediapath" , "./" );
+  rootDir = settings.readEntry( "headunit/musicpath" , "./" );
   QDir dir(rootDir);
   rootDir = dir.canonicalPath();
   valid = true;

@@ -18,11 +18,14 @@ class DBHandler : public QObject {
 private:
     QSqlDatabase *db;
     int numFiles;
+	void subPopulate(QString& musicPath, QString& videoPath, QString& extList);
 public:
     DBHandler();
-    void populateDB(QString& path);
-    void resetDB(void);
+	bool isEmpty();
 signals:
     void dbStatus(int,QString&);
+public slots:
+	void populateDB(QString& musicPath, QString& videoPath, QString& extList);
 };
+
 #endif

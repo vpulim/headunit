@@ -6,7 +6,6 @@
 #include "AudioPlayerScreen.h"
 #include "Skin.h"
 #include "MediaPlayer.h"
-#include "DBHandler.h"
 #include "ConfigDialog.h"
 
 const char *MenuScreen::keys[MenuScreen::NUM_BUTTONS] = 
@@ -48,9 +47,8 @@ void MenuScreen::init() {
   connect( buttons[VOLDN], SIGNAL(clicked()), mediaPlayer, SLOT(volumeDown()) );
   connect( buttons[MUTE], SIGNAL(clicked()), mediaPlayer, SLOT(volumeMute()) );
   connect( buttons[EXIT], SIGNAL(clicked()), qApp, SLOT(quit()) );
-  connect( buttons[APPEAR], SIGNAL(clicked()), configDialog, SLOT(show()) );
-  connect( updateTimer, SIGNAL(timeout()), this, SLOT(updateInfo()));
-  connect( dbHandler, SIGNAL(dbStatus(int,QString&)), configDialog, SLOT(currentStatus(int,QString&)) );
+  connect( buttons[APPEAR], SIGNAL(clicked()), configDialog, SLOT(exec()) );
+  connect( updateTimer, SIGNAL(timeout()), this, SLOT(updateInfo()) );
   updateTimer->changeInterval(500);
 }
 

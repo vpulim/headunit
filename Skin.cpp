@@ -23,16 +23,16 @@ QString fixFileCase(QString path, QString file) {
 
 Skin::Skin(const QString &skinFileName)
 {
-//  QString name = settings->readEntry("headunit/skin", "skin");
-  QString name("skin");
+  QString skin("skins/");
+  skin.append(settings.readEntry("headunit/skin", "Default"));
 
   // load skin file for the specified type
-  QString skin(name);
-  skin.append(QChar('/'));
-  skin.append(fixFileCase(name, skinFileName));
-  QFile skinFile(skin);
+  QString name(skin);
+  name.append(QChar('/'));
+  name.append(fixFileCase(name, skinFileName));
+  QFile skinFile(name);
   if (!skinFile.open( IO_ReadOnly )) {
-    qWarning("couldn't load skin file: %s", skin.latin1());
+    qWarning("couldn't load skin file: %s", name.latin1());
     return;
   }
 
@@ -41,24 +41,24 @@ Skin::Skin(const QString &skinFileName)
   skinFile.readLine(line, 255);
   skinFile.readLine(line, 255);
   if (skinFile.readLine(line, 255) < 0 || line[0] == ' ' || line[1] == ',') {
-    qWarning("invalid skin file: %s", skin.latin1());
+    qWarning("invalid skin file: %s", name.latin1());
     return;
   }
   QString files(line);
   files = files.stripWhiteSpace();
   
-  QString empty(name);
+  QString empty(skin);
   empty.append(QChar('/'));
-  empty.append(fixFileCase(name, files.section(',',0,0)));
-  QString off(name);
+  empty.append(fixFileCase(skin, files.section(',',0,0)));
+  QString off(skin);
   off.append(QChar('/'));
-  off.append(fixFileCase(name, files.section(',',1,1)));
-  QString on(name);
+  off.append(fixFileCase(skin, files.section(',',1,1)));
+  QString on(skin);
   on.append(QChar('/'));
-  on.append(fixFileCase(name, files.section(',',2,2)));
-  QString down(name);
+  on.append(fixFileCase(skin, files.section(',',2,2)));
+  QString down(skin);
   down.append(QChar('/'));
-  down.append(fixFileCase(name, files.section(',',3,3)));
+  down.append(fixFileCase(skin, files.section(',',3,3)));
 
   // load image files
   emptyImage = new QImage(empty);

@@ -11,7 +11,7 @@ typedef QValueList<QStringList> SkinItemList;
 class Skin
 {
  public:
-  Skin( const QString &skinfName);
+  Skin( const QString &skinFileName);
   ~Skin();
   bool isNull() { return items.empty(); }
   void set(QFrame &f);
