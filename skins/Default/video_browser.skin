@@ -17,8 +17,8 @@ B09,781,045,065,065,"PGUP","Page UP"
 /, (L) Label
 /,  x   y   w   h   r   g   b   pt font      Code   tooltip
 /,  --- --- --- --- --- --- --- -- ----      ----   -------
-L01,010,015,200,030,255,255,255,15,"Arial Black","TIME","Time"
-L02,700,015,200,030,255,255,255,15,"Arial Black","DATE","Date"
+L01,010,015,200,030,000,000,000,15,"Arial Black","TIME","Time"
+L02,700,015,200,030,000,000,000,15,"Arial Black","DATE","Date"
 
 /, (S) Selection list
 /,		    FORE	BACK        FOLDER      FILE        SELECTED    SELECT FONT
