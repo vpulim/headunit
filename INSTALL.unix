@@ -13,6 +13,8 @@ Headunit requires the following packages to be installed:
 
   * sqlite-2.8.14 or higher (http://www.sqlite.org/download.html)
 
+  * id3lib-3.8.1 or higher (http://id3lib.sourceforge.net)	
+
 To build headunit, do: 
    1) run "qmake"
    2) run "make"
