@@ -8,43 +8,47 @@ SelectionList::SelectionList( QWidget *parent, const char *name )
   setFont(QFont());
 }
 
-void SelectionList::scrollUp()
+bool SelectionList::scrollUp()
 {
   if (count() == 0)
-    return;
+    return false;
   if (currentItem() <= 0)
     setCurrentItem(0);
   else
     setCurrentItem(currentItem() - 1);
+  return true;
 }
 
-void SelectionList::scrollDown()
+bool SelectionList::scrollDown()
 {
-  if (count() == 0)
-    return;
+  if (count() == 0 || currentItem() + 1 >= count())
+	return false;
   setCurrentItem(currentItem() + 1);
+  return true;
 }
 
-void SelectionList::scrollPageUp()
+bool SelectionList::scrollPageUp()
 {
   int di = size().height()/(itemHeight+3);
   if (count() == 0)
-    return;
+    return false;
   if (currentItem() <= di)
     setCurrentItem(0);
   else
     setCurrentItem(currentItem() - di);
+  return true;
 }
 
-void SelectionList::scrollPageDown()
+bool SelectionList::scrollPageDown()
 {
   int di = size().height()/(itemHeight+3);
-  if (count() == 0)
-    return;
+  if (count() == 0 || currentItem() + 1 >= count())
+	return false;
   if (currentItem() + di >= count())
     setCurrentItem(count()-1);
   else
     setCurrentItem(currentItem() + di);
+  return true;
 }
 
 void SelectionList::fontChange(const QFont &oldFont)

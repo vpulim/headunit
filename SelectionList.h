@@ -10,10 +10,10 @@ class SelectionList : public QListBox
   SelectionList( QWidget *parent, const char *name );
 
  public slots:
-  void scrollUp();
-  void scrollDown();
-  void scrollPageUp();
-  void scrollPageDown();
+  bool scrollUp();
+  bool scrollDown();
+  bool scrollPageUp();
+  bool scrollPageDown();
 
  protected:
   void fontChange(const QFont &oldFont);

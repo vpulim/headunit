@@ -6,21 +6,21 @@
 #include "Button.h"
 #include "SelectionList.h"
 
-typedef QMap<QString, QStringList> SkinMap;
+typedef QValueList<QStringList> SkinItemList;
 
 class Skin
 {
  public:
   Skin( const QString &skinfName);
   ~Skin();
-  bool isNull() { return map.empty(); }
+  bool isNull() { return items.empty(); }
   void set(QFrame &f);
-  Button *getButton(const char *key, QWidget &parent);
-  QLabel *getLabel(const char *key, QWidget &parent);
+  Button *getButton(const char *code, QWidget &parent);
+  QLabel *getLabel(const char *code, QWidget &parent);
   SelectionList *getSelectionList(const char *key, QWidget &parent);
   
  private:
-  SkinMap map;
+  SkinItemList items;
   QImage *emptyImage;
   QImage *offImage;
   QImage *onImage;

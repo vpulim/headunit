@@ -16,6 +16,7 @@ class Button : public QPushButton
   QPixmap *offpixmap;
   QPixmap *onpixmap;
   QPixmap *downpixmap;
+
 };
 
 #endif // BUTTON_H

@@ -8,7 +8,8 @@
 
 Skin::Skin(const QString &skinFileName)
 {
-  QString name = settings->readEntry("headunit/skin", "skin");
+//  QString name = settings->readEntry("headunit/skin", "skin");
+  QString name("skin");
 
   // load skin file for the specified type
   QString skin(name);
@@ -79,7 +80,7 @@ Skin::Skin(const QString &skinFileName)
     QString l(line);
     l = l.stripWhiteSpace();
     QStringList values = QStringList::split(",", l, true);
-    map[values[0]] = values;
+    items += values;
   }
 }
 
@@ -99,12 +100,20 @@ void Skin::set(QFrame &f)
   f.resize(emptyImage->width(), emptyImage->height());
 }
 
-Button *Skin::getButton(const char *key, QWidget &parent)
+Button *Skin::getButton(const char *c, QWidget &parent)
 {
-  QStringList values = map[key];
+  QString code(c);
+  code.prepend('"').append('"');
+  SkinItemList::const_iterator it = items.constBegin();
+  QStringList values;
+  while ( it != items.constEnd()) {
+    if ((*it).count() > 5 && (*it)[5] == code && (*it)[0][0] == 'B')
+	  values = *it;
+    ++it;
+  }
   if (values.empty()) {
-    qWarning("skin item %s is not defined!",key);
-    return new Button(&parent, key);
+    qWarning("skin item %s is not defined!",code.latin1());
+    return new Button(&parent, code);
   }
   Button *b = new Button(&parent, values[5]);
   int x = values[1].toInt();
@@ -120,12 +129,20 @@ Button *Skin::getButton(const char *key, QWidget &parent)
   return b;
 }
 
-QLabel *Skin::getLabel(const char *key, QWidget &parent)
+QLabel *Skin::getLabel(const char *c, QWidget &parent)
 {
-  QStringList values = map[key];
+  QString code(c);
+  code.prepend('"').append('"');
+  SkinItemList::const_iterator it = items.constBegin();
+  QStringList values;
+  while ( it != items.constEnd()) {
+    if ((*it).count() > 10 && (*it)[10] == code && (*it)[0][0] == 'L')
+	  values = *it;
+    ++it;
+  }
   if (values.empty()) {
-    qWarning("skin item %s is not defined!",key);
-    return new QLabel(&parent, key);
+    qWarning("skin item %s is not defined!",code.latin1());
+    return new QLabel(&parent, code);
   }
   QLabel *l = new QLabel(&parent, values[10]);
   int x = values[1].toInt();
@@ -137,25 +154,30 @@ QLabel *Skin::getLabel(const char *key, QWidget &parent)
   l->setPaletteBackgroundPixmap(QPixmap(offImage->copy(x, y, w, h)));
   l->setFrameShape(QFrame::NoFrame);
   l->setFrameShadow(QFrame::Plain);
-  QString fontDesc = values[9].mid(1);
-  QString font = fontDesc.section(':',0,0).section(' ',0,0);
+  QString fontDesc = values[9].remove('"');
+  QString font = fontDesc.section(':',0,0);
   QString weight = fontDesc.section(':',1,1);
-  if (weight.isNull() || weight.isEmpty())
-    weight = fontDesc.section(' ',1,1);
   bool bold = true;
   if (weight.isNull() || weight.isEmpty())
     bold = false;
   l->setPaletteForegroundColor(QColor(values[5].toInt(),
 				      values[6].toInt(),
 				      values[7].toInt()));
-  l->setFont(QFont(font,values[8].toInt(), bold?QFont::Bold:QFont::Normal));
+  l->setFont(QFont(font,(int)(values[8].toFloat() + 0.5), bold?QFont::Bold:QFont::Normal));
   //  l->setText(values[11]);
   return l;
 }
 
 SelectionList *Skin::getSelectionList(const char *key, QWidget &parent)
 {
-  QStringList values = map[key];
+  SkinItemList::const_iterator it = items.constBegin();
+  QStringList values;
+  while ( it != items.constEnd()) {
+    if (strcmp((*it)[0].latin1(), key) == 0) {
+	  values = *it;
+    }
+    ++it;
+  }
   if (values.empty()) {
     qWarning("skin item %s is not defined!",key);
     return new SelectionList(&parent, key);
@@ -165,21 +187,28 @@ SelectionList *Skin::getSelectionList(const char *key, QWidget &parent)
   int y = values[2].toInt();
   int w = values[3].toInt();
   int h = values[4].toInt();
-  //  QColor foreColor(values[5].toInt(),values[6].toInt(),values[7].toInt());
-  QColor foreColor(255,255,255);
+  QColor foreColor(values[5].toInt(),values[6].toInt(),values[7].toInt());
+  //QColor foreColor(255,255,255);
   sl->move( x, y);
   sl->resize( w, h);
   sl->setFrameShape(QFrame::NoFrame);
   sl->setFrameShadow(QFrame::Plain);
   sl->setPaletteForegroundColor(foreColor);
   sl->setPaletteBackgroundPixmap(QPixmap(offImage->copy(x, y, w, h)));
-  QString fontDesc = values[22].mid(1);
+  int offset = 0;
+  int size = (int)(values[21].toFloat() + 0.5);
+  // hack for now
+  if (size > 36) {
+	  offset = 3;
+	  size = (int)(values[24].toFloat() + 0.5);
+  }
+  QString fontDesc = values[22+offset].remove('"');
   QString font = fontDesc.section(':',0,0);
   QString weight = fontDesc.section(':',1,1);
   bool bold = true;
   if (weight.isNull() || weight.isEmpty())
     bold = false;
-  sl->setFont(QFont(font,values[21].toInt(), bold?QFont::Bold:QFont::Normal));
+  sl->setFont(QFont(font,size, bold?QFont::Bold:QFont::Normal));
   QPalette p = sl->palette();  
   QColorGroup cg = p.active();
   cg.setColor(QColorGroup::Highlight, Qt::black);

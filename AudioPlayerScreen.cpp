@@ -6,17 +6,17 @@
 #include "MenuScreen.h"
 #include "AudioPlayerScreen.h"
 #include "AudioBrowserScreen.h"
-#include "XineVideo.h"
+#include "MediaPlayer.h"
 #include "SelectionList.h"
 #include "MediaItem.h"
 #include "Skin.h"
 
 const char *AudioPlayerScreen::buttonKeys[AudioPlayerScreen::NUM_BUTTONS] = 
-  {"B03","B09","B04","B17","B02","B01","B05","B06","B08","B07","B10","B11",
-   "B12","B13","B14","B15","B16"};
+  {"VISU","SHUFFLE/REPEAT","MIXER","MASTERMUTE","VOL-","VOL+","PREV","PLAY","NEXT","STOP","EJECT","LIST",
+   "EXIT","PGDOWN","DOWN","UP","PGUP"};
 
 const char *AudioPlayerScreen::labelKeys[AudioPlayerScreen::NUM_LABELS] = 
-  {"L04","L03","L08","L07","L08","L02","L01","L09","L10"};
+  {"TRACKNUMBER","TRACKNAME","PLAYLIST","VOLUME","STATUS","CURRENTTRACKTIME","TRACKTIME","TIME","DATE"};
 
 const char *AudioPlayerScreen::slKey = "S01";
 
@@ -67,10 +67,10 @@ void AudioPlayerScreen::init() {
   connect(buttons[STOP], SIGNAL(clicked()), this, SLOT(stop()) );
   connect(buttons[PREV], SIGNAL(clicked()), this, SLOT(previous()) );
   connect(buttons[NEXT], SIGNAL(clicked()), this, SLOT(next()) );
-  connect(buttons[VOLUP], SIGNAL(clicked()), xineVideo, SLOT(volumeUp()) );
-  connect(buttons[VOLDN], SIGNAL(clicked()), xineVideo, SLOT(volumeDown()) );
-  connect(buttons[MUTE], SIGNAL(clicked()), xineVideo, SLOT(volumeMute()) );
-  connect(buttons[VISU], SIGNAL(clicked()), xineVideo, SLOT(showAsVis()) );
+  connect(buttons[VOLUP], SIGNAL(clicked()), mediaPlayer, SLOT(volumeUp()) );
+  connect(buttons[VOLDN], SIGNAL(clicked()), mediaPlayer, SLOT(volumeDown()) );
+  connect(buttons[MUTE], SIGNAL(clicked()), mediaPlayer, SLOT(volumeMute()) );
+  connect(buttons[VISU], SIGNAL(clicked()), mediaPlayer, SLOT(showAsVis()) );
   connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(savePlayList()) );
   connect(audioBrowser, SIGNAL(fileSelected(const QString&)), 
 	  this, SLOT(addFileToPlayList(const QString&)));
@@ -89,20 +89,20 @@ void AudioPlayerScreen::play()
     index = 0;
   }
   MediaItem *mi = (MediaItem *)(playList->item(index));
-  xineVideo->open(mi->mrl());
-  xineVideo->play();
+  mediaPlayer->open(*mi);
+  mediaPlayer->play();
 }
 
 void AudioPlayerScreen::stop()
 {  
-  if (xineVideo->isPlaying())
-    xineVideo->stop();
+  if (mediaPlayer->isPlaying())
+    mediaPlayer->stop();
 }
 
 void AudioPlayerScreen::previous()
 {
   playList->scrollUp();
-  if (xineVideo->isPlaying()) {
+  if (mediaPlayer->isPlaying()) {
     stop();
     play();
   }
@@ -110,11 +110,18 @@ void AudioPlayerScreen::previous()
 
 void AudioPlayerScreen::next()
 {
-  playList->scrollDown();
-  if (xineVideo->isPlaying()) {
+  if (!playList->scrollDown())
+    return;
+  
+  if (mediaPlayer->isPlaying()) {
     stop();
     play();
   }
+}
+
+void AudioPlayerScreen::endOfStreamReached()
+{
+  next();
 }
 
 void AudioPlayerScreen::loadPlayList()
@@ -163,16 +170,18 @@ void AudioPlayerScreen::addFileToPlayList(const QString &file)
 void AudioPlayerScreen::updateInfo()
 {
   int pos = 0, len = 0;
-  if (xineVideo->isOpened()) {
-    xineVideo->getPosition(&pos,&len);
+  if (mediaPlayer->isOpened()) {
+    mediaPlayer->getPosition(&pos,&len);
   }
   QTime zero;
-  const char *title = xineVideo->getTitle();
-  labels[TRACKNAME]->setText(title?title:"");
+  QString title = mediaPlayer->getOpened().title();
+  labels[TRACKNAME]->setText(title.isNull()?QString("Unknown"):title);
   labels[CURRENTTRACKTIME]->setText(zero.addMSecs(pos).toString("mm:ss"));
   labels[TRACKTIME]->setText(zero.addMSecs(len).toString("mm:ss"));
   labels[TIME]->setText(QTime::currentTime().toString("hh:mm:ss"));
   labels[DATE]->setText(QDate::currentDate().toString("d/M/yyyy"));
-  labels[STATUS]->setText(xineVideo->isPlaying()?"PLAY":"STOP");
-  labels[VOLUME]->setNum(xineVideo->getVolume());
+  labels[STATUS]->setText(mediaPlayer->isPlaying()?"PLAY":"STOP");
+  labels[VOLUME]->setText(QString::number(mediaPlayer->getVolume()) + "%");
+  if (mediaPlayer->isPlaying() && pos == len)
+    endOfStreamReached();
 }

@@ -17,6 +17,7 @@ class AudioPlayerScreen : public FunctionScreen
 
  public slots:
   void addFileToPlayList(const QString &file);
+  void endOfStreamReached();
 
  private slots:
   void play();

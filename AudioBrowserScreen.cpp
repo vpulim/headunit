@@ -9,7 +9,7 @@
 #include "Skin.h"
 
 const char *AudioBrowserScreen::buttonKeys[AudioBrowserScreen::NUM_BUTTONS] = 
-  { "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09" };
+  { "SELECT", "SELECT+", "BACK", "BROWSE", "EXIT", "PGDOWN", "DOWN", "UP", "PGUP" };
 
 const char *AudioBrowserScreen::slKey = "S01";
 
