@@ -1,0 +1,28 @@
+Headunit requires the following packages to be installed:
+
+  * qt-3.3.2 or higher (http://www.trolltech.com/download/qt/x11.html)
+    NOTE: make sure you include at least the following options in the
+    configure script:
+   ./configure -sm -thread -stl -system-libjpeg -verbose -largefile \
+		-qt-imgfmt-{jpeg,mng,png} -tablet -system-libmng \
+		-system-libpng -lpthread -xft -xrender \
+		-fast -plugin-sql-sqlite
+
+  * xine-lib-1-rc4 or higher (http://xinehq.de/index.php/releases)
+    NOTE: make sure you enable sdl (--enable-sdl) in the configure script
+
+  * sqlite-2.8.14 or higher (http://www.sqlite.org/download.html)
+
+1) To build headunit, simple run "make".  An autoconf script will be developed in the future.
+
+2) Then, you will need to create a file called "headunitrc" in ~/.qt/ or INSTALL/etc/settings (if you are root), where INSTALL is the directory where qt is installed.  That file should contain the following:
+
+     [General]
+     mediapath=/path_to_media_files
+     db=headunit_db_file
+     skin=/path_to_skin
+
+Replace "/path_to_media_files" with the directory that contains the media files you want Headunit to load into the database" (currenlty, only mp3, avi, and mpg files are loaded).
+Replace "headunit_db_file" with the filename (including full path) of the file you want to use as a headunit database file.  For example: /var/db/headunit.db or ~/headunit.db
+
+3) Download skin_XXX.zip from the sourceforge download page and unzip it into the skin directory specified in the headunitrc file above.

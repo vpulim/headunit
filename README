@@ -1,0 +1,13 @@
+See the file INSTALL for instructions on how to compile and setup headunit.
+
+The UI is pretty straightforward to understand.  Not all buttons work yet.
+
+When the program is first executed, a database file is first created and populated with all the audio and video files in your media path.  (NOTE: if it hangs here, there was probably a problem with loading one of the files in your path.  This problem will be fixed in later versions.  For now, choose a different path.).  Once in the main menu, click on the "Music" button to view your current playlist.  (NOTE: The "Music" button should really be called "Media" since it works with both audio and video files).  Click on the "Playlist" button (the one with the paper icon) to load the file browser.  Double-clicking on a file or clicking the select or select+ buttons will add the highlighted file to your playlist.  Multiple files can be added here (currently, there is no feedback that you added a file).  Click on the "Back" button to return to the playlist and see the files you added.
+
+You can then play file with the play/stop/prev/next buttons.  Click on the "eye" icon to view visualizations or video files.
+
+From the main menu screen, click on the "DVD" button will play the DVD that is currently inserted in your DVD drive.  Currently, it only displays the main DVD menu.  
+
+From the main menu screen, click on the "Video" button will display the current video or visualization being played.
+
+The only other button that works on the main menu screen is "Exit".
