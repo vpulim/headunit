@@ -1,0 +1,12 @@
+Headunit requires the following packages to be installed:
+
+  * qt-3.3.2 or higher (http://www.trolltech.com/download/index.html)
+  * DirectX 9.0 (or higher) SDK (http://www.microsoft.com/downloads)
+
+To build headunit, do: 
+   1) Install the Qt Toolkit
+   2) edit headunit.pro and change INCLUDEPATH and LIBS settings in the win32 section of the file to point to where your DirectX 9.0 Include and Lib directories are
+   3) run "qmake -t vcapp -o headunit.vcproj headunit.pro"
+   4) this generates a Visual Studio project file that you can then open and build
+
+

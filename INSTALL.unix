@@ -1,0 +1,19 @@
+Headunit requires the following packages to be installed:
+
+  * qt-3.3.2 or higher (http://www.trolltech.com/download/qt/x11.html)
+    NOTE: make sure you include at least the following options in the
+    configure script:
+   ./configure -sm -thread -stl -system-libjpeg -verbose -largefile \
+		-qt-imgfmt-{jpeg,mng,png} -tablet -system-libmng \
+		-system-libpng -lpthread -xft -xrender \
+		-fast -plugin-sql-sqlite
+
+  * xine-lib-1-rc4 or higher (http://xinehq.de/index.php/releases)
+    NOTE: make sure you enable sdl (--enable-sdl) in the configure script
+
+  * sqlite-2.8.14 or higher (http://www.sqlite.org/download.html)
+
+To build headunit, do: 
+   1) run "qmake"
+   2) run "make"
+
