@@ -1,0 +1,46 @@
+MEDIACAR Skin
+MEDIACAR Default Menu skin
+menu_empty.jpg,menu_off.jpg,menu_on.jpg,menu_down.jpg
+
+/, (B) Buttons
+/,  x   y   w   h   Code  tooltip
+/,  --- --- --- --- ----- -------
+B01,038,056,370,092,"AUDIO","Audio Player"
+B02,444,056,370,092,"VIDEO","Video player"
+B03,038,147,370,092,"DVD","DVD Player"
+B04,444,147,370,092,"RADIO","Radio player"
+B05,038,238,370,092,"LAUNCH","Launcher"
+B06,444,238,370,092,"GPS","GPS"
+B07,072,335,073,073,"MUTE","Mute"
+B08,221,335,073,073,"VOL-","Volume-"
+B09,566,335,073,073,"VOL+","Volume+"
+B10,700,335,073,073,"MIXER","Mixer settings"
+B13,038,416,235,064,"APPEARANCE","Appearance menu"
+B11,315,416,235,064,"EXIT","Exit"
+B12,585,416,235,064,"GAMMA","Gamma mode"
+
+/, (I) Indicator
+/,  x   y   w   h   Code  
+/,  --- --- --- --- ----- 
+I01,110,357,020,035,"MUTE"
+
+/, (Y) Slider Style
+/,  Back Slider file path  
+/,  ---------------------- 
+Y01,"SLIDER3\SLIDER_*.gif"
+
+/, (S) Slider
+/,                                    Slider
+/,  x   y   w   h   x1  y1  w1  h1  O Style Pointer file path h2  Code  tooltip
+/,  --- --- --- --- --- --- --- --- - ----- ----------------- --- ----- -------
+/,S01,295,378,260,023,295,378,260,023,H,01,"SLIDER3\POINTER.gif",014,"MASTER","Master"
+S01,295,377,260,023,295,375,260,023,H,01,"SLIDER3\POINTER.gif",013,"MASTER","Master"
+
+/, (L) Label
+/,  x   y   w   h   r   g   b   pt font      Code   tooltip
+/,  --- --- --- --- --- --- --- -- ----      ----   -------
+L01,010,015,200,030,000,000,000,15,"Arial Black","TIME","Time"
+L02,700,015,200,030,000,000,000,15,"Arial Black","DATE","Date"
+/,L03,455,352,100,030,255,255,255,9,"Arial Black","VOLUME","Volume"
+
+END

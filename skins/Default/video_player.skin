@@ -1,0 +1,43 @@
+MEDIACAR Skin
+MEDIACAR Default "Video player" skin
+video_player_empty.jpg,video_player_off.jpg,video_player_on.jpg,video_player_down.jpg
+
+/, (B) Buttons
+/,  x   y   w   h   Code  tooltip
+/,  --- --- --- --- ----- -------
+B13,010,009,070,070,"MUTE","Mute"
+B02,080,009,070,070,"VOL-","Volume-"
+B01,150,009,070,070,"VOL+","Volume+"
+
+B03,010,124,070,070,"ZOOM","Zoom"
+B11,080,124,070,070,"LIST","Playlist"
+B04,150,124,070,070,"MIXER","Mixer"
+
+B05,365,124,070,070,"PREV","Prev"
+B07,436,124,070,070,"STOP","Stop"
+B06,505,124,070,070,"PLAY","Play"
+B08,572,124,070,070,"NEXT","Right"
+
+B09,780,004,063,063,"UP","Up"
+B10,780,068,063,063,"DOWN","Down"
+B12,780,130,063,063,"EXIT","Exit"
+/B13,019,024,118,147,"EJECT","Eject"
+
+/, (L) Label
+/,  x   y   w   h   r   g   b   pt font      Code   tooltip
+/,  --- --- --- --- --- --- --- -- ----      ----   -------
+L04,247,055,070,035,255,245,0,20,"Tahoma:B","TRACKNUMBER","Track number"
+L03,287,055,475,035,255,245,0,20,"Tahoma:B","TRACKNAME","Track name"
+
+/,L09,247,097,780,020,255,255,255,13,"Arial:N","PLAYLIST","Playlist"
+
+L06,535,097,150,030,255,255,255,13,"Arial Black","STATUS","Status"
+L02,620,097,100,030,255,255,255,13,"Arial Black","CURRENTTRACKTIME","Current track time"
+L01,695,097,100,030,255,255,255,13,"Arial Black","TRACKTIME","Total Track Time"
+
+L05,157,086,100,030,000,000,000,9,"Arial Black","VOLUME","Volume"
+
+L07,233,013,150,030,000,000,000,14,"Arial Black","TIME","Time"
+L08,650,013,150,030,000,000,000,14,"Arial Black","DATE","Date"
+
+END
