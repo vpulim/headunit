@@ -7,6 +7,8 @@
 ** place of a destructor.
 *****************************************************************************/
 
+#include "HeadUnit.h"
+
 void ConfigDialog::init() 
 {
     tabDatabase->raise();
@@ -117,7 +119,7 @@ void ConfigDialog::synchDBClicked()
 		extensions+="*."+listExtensions->text(i)+" "; 
     textPaths->clear();
     lcdNumFiles->display(0);  
-	db->populateDB(lineMusicPath->text(), lineVideoPath->text(), extensions);
+    db->populateDB(lineMusicPath->text(), lineVideoPath->text(), extensions, checkParseID3->isChecked());
 }
 
 
@@ -145,7 +147,7 @@ void ConfigDialog::skinSelect( int item )
     skinName.append(listBoxSkins->text(item));
     skinName.append("/MENU_OFF.jpg");
     QPixmap preview(skinName);
-    pixmapPreview->setPixmap(preview);
+    pixmapPreview->setPixmap(preview);    
 }
 
 
@@ -157,4 +159,6 @@ void ConfigDialog::setSkinClicked()
     if (!skin.isNull() && !skin.isEmpty()) {
 	settings.writeEntry( "/headunit/skin", skin);
     }
+    destroyGui();
+    initializeGui();
 }

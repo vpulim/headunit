@@ -60,7 +60,7 @@ void MediaPlayer::init()
 
 void MediaPlayer::cleanup() 
 {
-  close();
+  closeItem();
 }
 
 bool MediaPlayer::getPosition(long *pos, long *len)
@@ -89,9 +89,9 @@ bool MediaPlayer::setPosition(long pos)
   return true;
 }
 
-void MediaPlayer::open(const MediaItem &m) 
+void MediaPlayer::openItem(const MediaItem &m) 
 {
-  close();
+  closeItem();
   QString mrl = m.mrl();
   if (mrl.startsWith("file://"))
     mrl = mrl.mid(7);
@@ -128,7 +128,7 @@ void MediaPlayer::open(const MediaItem &m)
 
 #define SAFE_RELEASE(x) { if (x) x->Release(); x = NULL; }
 
-void MediaPlayer::close() 
+void MediaPlayer::closeItem() 
 {
   stop();
   openedItem = MediaItem::null;
@@ -216,7 +216,7 @@ void MediaPlayer::showAsDVD()
   if (panel_on) activePanel->hide();    
   activePanel = dvdPanel;
   if (panel_on) activePanel->show();    
-  close();
+  closeItem();
 
   IDvdGraphBuilder *pDvdGB = NULL;
   CoCreateInstance(CLSID_DvdGraphBuilder, NULL, 

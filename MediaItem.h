@@ -12,7 +12,7 @@ class MediaItem
 	    const QString &album,
 	    const QString &title,
 	    const QString &genre,
-      const QString &mrl); 
+	    const QString &mrl); 
   MediaItem &operator= (const MediaItem &m);
   int id() const { return _id; };
   QString artist() const { return _artist; };
@@ -20,6 +20,7 @@ class MediaItem
   QString title() const { return _title; };
   QString genre() const { return _genre; };
   QString mrl() const { return _mrl; };
+  QString displayText();
   bool isNull() { return _mrl.isNull(); };
 
   static const MediaItem null;

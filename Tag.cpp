@@ -1,14 +1,6 @@
 #include "Tag.h"
 #include <id3/misc_support.h>
 
-Tag::Tag() : artist("Unknown"),
-	     album("Unknown"),
-	     title("Unknown"),
-	     genre("Unknown"),
-	     picture(NULL)
-{
-}
-
 Tag::Tag(QString file) : artist("Unknown"),
 			 album("Unknown"),
 			 title("Unknown"),

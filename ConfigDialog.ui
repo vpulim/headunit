@@ -434,53 +434,6 @@
                     <string>textLabel1</string>
                 </property>
             </widget>
-            <widget class="QTextEdit">
-                <property name="name">
-                    <cstring>textPaths</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>40</x>
-                        <y>140</y>
-                        <width>330</width>
-                        <height>140</height>
-                    </rect>
-                </property>
-                <property name="hScrollBarMode">
-                    <enum>AlwaysOff</enum>
-                </property>
-                <property name="linkUnderline">
-                    <bool>false</bool>
-                </property>
-                <property name="wordWrap">
-                    <enum>NoWrap</enum>
-                </property>
-                <property name="undoDepth">
-                    <number>0</number>
-                </property>
-                <property name="undoRedoEnabled">
-                    <bool>false</bool>
-                </property>
-                <property name="autoFormatting">
-                    <set>AutoNone</set>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>checkShowFiles</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>300</x>
-                        <y>120</y>
-                        <width>70</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Show files</string>
-                </property>
-            </widget>
             <widget class="QLCDNumber">
                 <property name="name">
                     <cstring>lcdNumFiles</cstring>
@@ -518,6 +471,81 @@
                 </property>
                 <property name="segmentStyle">
                     <enum>Flat</enum>
+                </property>
+            </widget>
+            <widget class="QTextEdit">
+                <property name="name">
+                    <cstring>textPaths</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>40</x>
+                        <y>140</y>
+                        <width>290</width>
+                        <height>140</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <family>Lucida Console</family>
+                        <pointsize>6</pointsize>
+                    </font>
+                </property>
+                <property name="hScrollBarMode">
+                    <enum>AlwaysOff</enum>
+                </property>
+                <property name="linkUnderline">
+                    <bool>false</bool>
+                </property>
+                <property name="wordWrap">
+                    <enum>NoWrap</enum>
+                </property>
+                <property name="undoDepth">
+                    <number>0</number>
+                </property>
+                <property name="undoRedoEnabled">
+                    <bool>false</bool>
+                </property>
+                <property name="autoFormatting">
+                    <set>AutoNone</set>
+                </property>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>checkShowFiles</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>340</x>
+                        <y>140</y>
+                        <width>70</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Show files</string>
+                </property>
+                <property name="checked">
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>checkParseID3</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>340</x>
+                        <y>160</y>
+                        <width>100</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Parse ID3 Tags</string>
+                </property>
+                <property name="checked">
+                    <bool>true</bool>
                 </property>
             </widget>
         </widget>

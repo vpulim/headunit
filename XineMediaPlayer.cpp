@@ -129,7 +129,7 @@ void MediaPlayer::init()
 
 void MediaPlayer::cleanup() 
 {
-  close();
+  closeItem();
   //  xine_event_dispose_queue(event_queue);
   xine_dispose(audio_stream);
   xine_dispose(av_stream);
@@ -163,9 +163,9 @@ bool MediaPlayer::setPosition(long pos)
   return xine_play (stream, 0, pos);
 }
 
-void MediaPlayer::open(const MediaItem &mi) 
+void MediaPlayer::openItem(const MediaItem &mi) 
 {
-  close();
+  closeItem();
   QString mrl = mi.mrl();
   if (!xine_open(stream, mrl.latin1())) {
     qWarning("Unable to open location: %s", mrl.latin1());
@@ -173,14 +173,14 @@ void MediaPlayer::open(const MediaItem &mi)
   }
   if (xine_get_stream_info(stream, XINE_STREAM_INFO_HAS_VIDEO)) {
     if (stream != av_stream) {
-      close();
+      closeItem();
       stream = av_stream;
       xine_open(stream, mrl.latin1()); 
     }
   }
   else {
     if (stream != audio_stream) {
-      close();
+      closeItem();
       stream = audio_stream;
       xine_open(stream, mrl.latin1()); 
     }
@@ -188,7 +188,7 @@ void MediaPlayer::open(const MediaItem &mi)
   openedItem = mi;
 }
 
-void MediaPlayer::close() 
+void MediaPlayer::closeItem() 
 {
   if (!openedItem.isNull())
     xine_close(stream);
@@ -274,9 +274,9 @@ void MediaPlayer::showAsDVD()
   if (panel_on) activePanel->hide();    
   activePanel = dvdPanel;
   if (panel_on) activePanel->show();    
-  close();
+  closeItem();
   MediaItem dvd(-1,"","","DVD","","dvd://");
-  open(dvd);
+  openItem(dvd);
   play();
   display();
 }

@@ -16,5 +16,6 @@ extern class QSettings settings;
 QString getMediaPath(void);
 QString askMediaPath(void);
 void setMediaPath(QString path);
-
+int initializeGui();
+void destroyGui();
 #endif 

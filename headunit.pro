@@ -1,7 +1,6 @@
 TEMPLATE	= app
 LANGUAGE	= C++
 
-
 INCLUDEPATH	+= .
 
 HEADERS	+= AudioBrowserScreen.h \

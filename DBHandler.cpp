@@ -56,47 +56,60 @@ void DBHandler::saveAppState()
   saveStateValue( "volume", QString::number(appState->volume) );
 }
 
-void DBHandler::populateDB(const QString& musicPath, const QString& videoPath, const QString& extensions) 
+void DBHandler::populateDB(const QString& musicPath, const QString& videoPath, const QString& extensions, bool parseID3) 
 {    
-	numFiles = 0;
+  numFiles = 0;
   QSqlQuery q;
   q.exec(TRUNCATE_MUSIC_TABLE);
   q.exec(CREATE_MUSIC_TABLE);
   q.exec(CREATE_MUSIC_INDEX);
   q.exec(TRUNCATE_ALBUMART_TABLE);
   q.exec(CREATE_ALBUMART_TABLE);
-  subPopulate( musicPath, videoPath, extensions );
+  subPopulate( musicPath, videoPath, extensions, parseID3 );
 }
 
-void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, const QString& extensions) 
+void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, const QString& extensions, bool parseID3) 
 {    
   if ( musicPath == QString::null )
 	  return;
 
   QFileInfo info(musicPath);
-  Tag tag;
   if (!info.isDir()) {
-    tag.link(info.absFilePath());
-    QString artist = tag.getArtist();
-    QString title = tag.getTitle();
-    if (title == "Unknown") {
-      title = info.fileName();
+    qWarning("processing: %s", info.absFilePath().latin1());
+    QString artist = "Unknown", title = info.baseName(TRUE);
+    QString album = "Unknown", genre = "Unknown";
+    if (parseID3) {
+      Tag tag(info.absFilePath());
+      artist = tag.getArtist();
+      album = tag.getAlbum();
+      if (tag.getTitle() != "Unknown")
+	title = tag.getTitle();
+      genre = tag.getGenre();
+      qWarning("parsed ID3 tag: artist=[%s] title=[%s]", 
+	       tag.getArtist().latin1(),
+	       tag.getTitle().latin1());
     }
     
     QSqlQuery query;
     query.prepare(INSERT_MUSIC_ITEM);
     query.bindValue(":key", info.dirPath(TRUE));
     query.bindValue(":artist", artist);
-    query.bindValue(":album", tag.getAlbum());
+    query.bindValue(":album", album);
     query.bindValue(":title", title);
-    query.bindValue(":genre", tag.getGenre());
+    query.bindValue(":genre", genre);
     query.bindValue(":mrl", "file://" + info.absFilePath());
     
     query.exec();
     numFiles++;
-    emit dbStatus(numFiles, artist + " - " + title);
+    if (artist == "Unknown")
+      emit dbStatus(numFiles, title);
+    else
+      emit dbStatus(numFiles, artist + " - " + title);
+    qWarning("ok");
     return;
   }
+
+  qWarning("entering: %s", info.absFilePath().latin1());
       
   if (extensions.isNull()) {
 	qWarning("no extensions specified");
@@ -106,8 +119,10 @@ void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, 
   QString extPlusJPG = extensions + " *.jpg";
   QDir dir(musicPath,extPlusJPG.latin1(), QDir::DirsFirst);
   dir.setMatchAllDirs(true);
-  if (!dir.isReadable())
-  	return;
+  if (!dir.isReadable()) {
+    qWarning("directory is not readable: %s", info.absFilePath().latin1());
+    return;
+  }
   
   QFileInfoList *entries = (QFileInfoList *)dir.entryInfoList();
   QFileInfo *fi;
@@ -119,7 +134,7 @@ void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, 
 	saveAlbumArt(key, image);
       }
       else
-	subPopulate( fi->absFilePath(), videoPath, extensions );
+	subPopulate( fi->absFilePath(), videoPath, extensions, parseID3 );
     }
   }
   return;
@@ -250,13 +265,12 @@ void DBHandler::saveAlbumArt(QString& key, QPixmap& image)
   m.scale(scalew,scaleh);
   QPixmap scaled = image.xForm(m);
   scaled.save( &buffer, "JPEG" );
-//  qWarning("saved: size=%u",ba.size());
   int size = ba.size();
-  dataBuffer.resize((uint)(size*1.2), QGArray::SpeedOptim);
+  if (dataBuffer.size() < size*2)
+    dataBuffer.resize((uint)(size*2), QGArray::SpeedOptim);
   uint encodedSize = sqlite_encode_binary((uchar *)ba.data(), ba.size(), 
 					  (uchar *)dataBuffer.data());
   dataBuffer.truncate(encodedSize);
-//  dumpString(dataBuffer.data(), dataBuffer.size(), "saved.dat");
   QSqlQuery q;
   q.prepare(INSERT_ALBUMART);
   q.bindValue(":key", key);

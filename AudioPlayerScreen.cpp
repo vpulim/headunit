@@ -94,9 +94,9 @@ void AudioPlayerScreen::play()
     listView->setCurrentItem(0);
     index = 0;
   }
-  mediaPlayer->open(playList[index]);
-  mediaPlayer->play();
   appState->folderIndex = index;
+  mediaPlayer->openItem(playList[index]);
+  mediaPlayer->play();
 }
 
 void AudioPlayerScreen::playpause()
@@ -245,7 +245,7 @@ void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index)
   listView->clear();
   int size = playList.size();
   for (int i=0; i<size; i++) {
-    listView->insertItem(QString::number(i+1)+". "+playList[i].artist() + " - " + playList[i].title());
+    listView->insertItem(QString::number(i+1)+". "+playList[i].displayText());
   }
 
   listView->setCurrentItem(index);
@@ -262,9 +262,7 @@ void AudioPlayerScreen::updateInfo()
     mediaPlayer->getPosition(&pos,&len);
   }
   QTime zero;
-  QString artist = mediaPlayer->getOpened().artist();
-  QString title = mediaPlayer->getOpened().title();
-  labels[TRACKNAME]->setText(artist + " - " + title);
+  labels[TRACKNAME]->setText(mediaPlayer->getOpened().displayText());
   labels[CURRENTTRACKTIME]->setText(zero.addMSecs(pos).toString("mm:ss"));
   labels[TRACKTIME]->setText(zero.addMSecs(len).toString("mm:ss"));
   labels[TIME]->setText(QTime::currentTime().toString("hh:mm:ss"));

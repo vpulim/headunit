@@ -8,7 +8,6 @@
 class Tag
 {
  public:
-  Tag();
   Tag(QString file);
   void link(QString file);
   QString getArtist() { return artist; };

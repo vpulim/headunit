@@ -21,10 +21,11 @@ class MediaPlayer : public FunctionScreen
   bool setPosition(long pos);
   int getVolume() { return volume; };
   void setVolume(int volume);
+  bool close(bool deleteAlso) {closeItem();return QWidget::close(deleteAlso);};
 
  public slots:
-  void open(const MediaItem &m);
-  void close();
+  void openItem(const MediaItem &m);
+  void closeItem();
   void play();
   void pause();
   void stop();

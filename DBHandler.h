@@ -51,7 +51,7 @@ class DBHandler : public QObject {
   int valid;
   QByteArray dataBuffer;
 
-  void subPopulate(const QString& musicPath, const QString& videoPath, const QString& extList);
+  void subPopulate(const QString& musicPath, const QString& videoPath, const QString& extList, bool parseID3);
   QString loadStateValue(const QString& var, const QString& def = QString::null);
   QString loadStateValue(const char *var, const char *def = NULL) { return loadStateValue(QString(var), def == NULL ? QString::null : QString(def)); };
   void saveStateValue(const QString& var, const QString& value);
@@ -72,7 +72,7 @@ class DBHandler : public QObject {
 signals:
   void dbStatus(int,const QString&);
 public slots:
-  void populateDB(const QString& musicPath, const QString& videoPath, const QString& extList);
+  void populateDB(const QString& musicPath, const QString& videoPath, const QString& extList, bool parseID3);
   void loadAppState();
   void saveAppState();
 };

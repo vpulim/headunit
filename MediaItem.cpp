@@ -39,3 +39,11 @@ MediaItem &MediaItem::operator= (const MediaItem &m)
 
 	return *this;
 }
+
+QString MediaItem::displayText() {
+  if (isNull())
+    return QString::null;
+  if (_artist == "Unknown")
+    return _title;
+  return _artist + " - " + _title;
+};

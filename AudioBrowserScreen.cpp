@@ -85,7 +85,7 @@ void AudioBrowserScreen::setDir(const QString &path)
   dbHandler->loadMusicList(currDir, false, musicList);
   int size = musicList.size();
   for (int i=0; i<size; i++) {
-    listView->insertItem(musicList[i].artist() + " - " + musicList[i].title());
+    listView->insertItem(musicList[i].displayText());
   }
 }
 
