@@ -12,7 +12,9 @@ class AudioBrowserScreen : public FunctionScreen
 {
   Q_OBJECT
  public:
-  AudioBrowserScreen();
+  AudioBrowserScreen(QWidget* parent = 0);
+  AudioBrowserScreen(QString& name, QWidget* parent = 0)
+    :FunctionScreen(name, parent) {};
   void init();
 
  private slots:
@@ -24,9 +26,9 @@ class AudioBrowserScreen : public FunctionScreen
   void browseFolder();
 
  signals:
-  void folderSelected(QString &path, bool plus, int index);
+  void folderSelected(QString &path, bool plus, int index, long pos);
 
- private:
+ protected:
   void setDir(const QString &path);
   void folderSelect(bool plus);
   void displayAlbumArt(const QString& key);

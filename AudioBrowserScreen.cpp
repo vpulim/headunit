@@ -16,7 +16,8 @@ const char *AudioBrowserScreen::buttonKeys[AudioBrowserScreen::NUM_BUTTONS] =
 
 const char *AudioBrowserScreen::slKey = "S01";
 
-AudioBrowserScreen::AudioBrowserScreen() : FunctionScreen("AudioBrowser")
+AudioBrowserScreen::AudioBrowserScreen(QWidget* parent) 
+  : FunctionScreen("AudioBrowser", parent)
 {
   Skin skin("audio_browser.skin");
   if (skin.isNull()) {
@@ -82,7 +83,7 @@ void AudioBrowserScreen::setDir(const QString &path)
   displayAlbumArt(currDir);
 
   // read files from database using current directory as key
-  dbHandler->loadMusicList(currDir, false, musicList);
+  dbHandler->loadMediaList(currDir, false, musicList);
   int size = musicList.size();
   for (int i=0; i<size; i++) {
     listView->insertItem(musicList[i].displayText());
@@ -132,7 +133,7 @@ void AudioBrowserScreen::folderSelect(bool plus)
     }
     path += "/" + listView->dir(i);
   }
-  emit folderSelected(path, plus, 0);
+  emit folderSelected(path, plus, 0, 0);
   lower();
 }
 
@@ -141,7 +142,7 @@ void AudioBrowserScreen::select(int index)
   if (listView->isDir(index))
     setDir(currDir + "/" + listView->dir(index));
   else {
-    emit folderSelected(currDir, false, 0);
+    emit folderSelected(currDir, false, 0, 0);
     lower();
   }
 }

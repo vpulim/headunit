@@ -7,6 +7,7 @@
 extern class MenuScreen *menu;
 extern class AudioPlayerScreen *audioPlayer;
 extern class AudioBrowserScreen *audioBrowser;
+extern class VideoBrowserScreen *videoBrowser;
 extern class MediaPlayer *mediaPlayer;
 extern class ConfigDialog *configDialog;
 extern class DBHandler *dbHandler;

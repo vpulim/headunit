@@ -17,9 +17,12 @@ void ConfigDialog::init()
     settings.setPath( "mp3car", "headunit" );    
     
     // load file extensions
-    QString extensions = settings.readEntry( "/headunit/extensions", "mp3;wma;avi;mpg" );
+    QString extensions = settings.readEntry( "/headunit/audioExt", "mp3;wma;cda;wav" );
     QStringList list = QStringList::split(";", extensions);
     listExtensions->insertStringList(list);
+    extensions = settings.readEntry( "/headunit/videoExt", "avi;wmv;mpg;mpeg;dat;vob" );
+    list = QStringList::split(";", extensions);
+    listExtensionsVideo->insertStringList(list);
     
     // load media paths
     lineMusicPath->setText(settings.readEntry("/headunit/musicpath", ""));
@@ -93,6 +96,7 @@ void ConfigDialog::videoBrowseClicked()
 }
 
 
+
 void ConfigDialog::extAddClicked()
 {
     QString ext = lineAdd->text();
@@ -106,20 +110,43 @@ void ConfigDialog::extAddClicked()
 }
 
 
+void ConfigDialog::extAddVideoClicked()
+{
+    QString ext = lineAddVideo->text();
+    lineAddVideo->clear();
+    if (!ext.isNull() && !ext.isEmpty()) {
+	ext.remove('.');
+	if (listExtensionsVideo->findItem(ext, Qt::ExactMatch))
+	    return;
+	listExtensionsVideo->insertItem(ext);
+    }
+
+}
+
+
 void ConfigDialog::extRemoveClicked()
 {
     listExtensions->removeItem(listExtensions->currentItem());
 }
 
 
+void ConfigDialog::extRemoveVideoClicked()
+{
+    listExtensionsVideo->removeItem(listExtensionsVideo->currentItem());
+}
+
+
 void ConfigDialog::synchDBClicked()
 {
-    QString extensions;
+    QString musicExt;
+    QString videoExt;
     for (int i=0; i<listExtensions->count(); i++)
-		extensions+="*."+listExtensions->text(i)+" "; 
+		musicExt += "*."+listExtensions->text(i)+" "; 
+    for (int i=0; i<listExtensionsVideo->count(); i++)
+		videoExt += "*."+listExtensionsVideo->text(i)+" "; 
     textPaths->clear();
     lcdNumFiles->display(0);  
-    db->populateDB(lineMusicPath->text(), lineVideoPath->text(), extensions, checkParseID3->isChecked());
+    db->populateDB(lineMusicPath->text(), lineVideoPath->text(), musicExt, videoExt, checkParseID3->isChecked());
 }
 
 

@@ -279,110 +279,8 @@
                 <cstring>Widget2</cstring>
             </property>
             <attribute name="title">
-                <string>Media Folders</string>
+                <string>Media Search Paths</string>
             </attribute>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>labelMusicPath</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>20</y>
-                        <width>70</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Music Folder:</string>
-                </property>
-            </widget>
-            <widget class="QToolButton">
-                <property name="name">
-                    <cstring>buttonVideoBrowse</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>290</x>
-                        <y>50</y>
-                        <width>21</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>...</string>
-                </property>
-            </widget>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineVideoPath</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>80</x>
-                        <y>50</y>
-                        <width>210</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="frameShape">
-                    <enum>LineEditPanel</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-                <property name="text">
-                    <string></string>
-                </property>
-            </widget>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineMusicPath</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>80</x>
-                        <y>20</y>
-                        <width>210</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string></string>
-                </property>
-            </widget>
-            <widget class="QToolButton">
-                <property name="name">
-                    <cstring>buttonMusicBrowse</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>290</x>
-                        <y>20</y>
-                        <width>21</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>...</string>
-                </property>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>labelVideoPath</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>50</y>
-                        <width>70</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Video Folder:</string>
-                </property>
-            </widget>
             <widget class="QLabel">
                 <property name="name">
                     <cstring>labelNumSynched</cstring>
@@ -400,22 +298,6 @@
                 </property>
                 <property name="alignment">
                     <set>AlignVCenter|AlignRight</set>
-                </property>
-            </widget>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>buttonSyncDB</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>80</x>
-                        <y>80</y>
-                        <width>100</width>
-                        <height>25</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Synch Database</string>
                 </property>
             </widget>
             <widget class="QLabel">
@@ -548,6 +430,130 @@
                     <bool>true</bool>
                 </property>
             </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>labelVideoPath</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>50</y>
+                        <width>100</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Video Search Path:</string>
+                </property>
+                <property name="alignment">
+                    <set>AlignVCenter|AlignRight</set>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>labelMusicPath</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>20</y>
+                        <width>100</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Music Search Path:</string>
+                </property>
+                <property name="alignment">
+                    <set>AlignVCenter|AlignRight</set>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>lineVideoPath</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>50</y>
+                        <width>210</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="frameShape">
+                    <enum>LineEditPanel</enum>
+                </property>
+                <property name="frameShadow">
+                    <enum>Sunken</enum>
+                </property>
+                <property name="text">
+                    <string></string>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>lineMusicPath</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>20</y>
+                        <width>210</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string></string>
+                </property>
+            </widget>
+            <widget class="QToolButton">
+                <property name="name">
+                    <cstring>buttonVideoBrowse</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>330</x>
+                        <y>50</y>
+                        <width>21</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>...</string>
+                </property>
+            </widget>
+            <widget class="QToolButton">
+                <property name="name">
+                    <cstring>buttonMusicBrowse</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>330</x>
+                        <y>20</y>
+                        <width>21</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>...</string>
+                </property>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>buttonSyncDB</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>80</y>
+                        <width>100</width>
+                        <height>25</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Synch Database</string>
+                </property>
+            </widget>
         </widget>
         <widget class="QWidget">
             <property name="name">
@@ -556,27 +562,14 @@
             <attribute name="title">
                 <string>File Extensions</string>
             </attribute>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineAdd</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>20</x>
-                        <y>20</y>
-                        <width>87</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-            </widget>
             <widget class="QPushButton">
                 <property name="name">
-                    <cstring>buttonAdd</cstring>
+                    <cstring>buttonAddVideo</cstring>
                 </property>
                 <property name="geometry">
                     <rect>
-                        <x>110</x>
-                        <y>18</y>
+                        <x>350</x>
+                        <y>38</y>
                         <width>82</width>
                         <height>25</height>
                     </rect>
@@ -587,18 +580,63 @@
             </widget>
             <widget class="QPushButton">
                 <property name="name">
-                    <cstring>buttonRemove</cstring>
+                    <cstring>buttonRemoveVideo</cstring>
                 </property>
                 <property name="geometry">
                     <rect>
-                        <x>110</x>
-                        <y>58</y>
+                        <x>350</x>
+                        <y>78</y>
                         <width>82</width>
                         <height>25</height>
                     </rect>
                 </property>
                 <property name="text">
                     <string>Remove</string>
+                </property>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>buttonRemove</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>110</x>
+                        <y>78</y>
+                        <width>82</width>
+                        <height>25</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Remove</string>
+                </property>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>buttonAdd</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>110</x>
+                        <y>38</y>
+                        <width>82</width>
+                        <height>25</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Add</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>lineAdd</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>40</y>
+                        <width>87</width>
+                        <height>20</height>
+                    </rect>
                 </property>
             </widget>
             <widget class="QListBox">
@@ -608,7 +646,68 @@
                 <property name="geometry">
                     <rect>
                         <x>20</x>
-                        <y>60</y>
+                        <y>80</y>
+                        <width>86</width>
+                        <height>130</height>
+                    </rect>
+                </property>
+                <property name="currentItem">
+                    <number>-1</number>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>videoExtLabel</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>260</x>
+                        <y>10</y>
+                        <width>110</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Video File Extensions:</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>audioExtLabel</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>10</y>
+                        <width>110</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Audio File Extensions:</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>lineAddVideo</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>260</x>
+                        <y>40</y>
+                        <width>87</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QListBox">
+                <property name="name">
+                    <cstring>listExtensionsVideo</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>260</x>
+                        <y>80</y>
                         <width>86</width>
                         <height>130</height>
                     </rect>
@@ -695,6 +794,18 @@
         <receiver>ConfigDialog</receiver>
         <slot>setSkinClicked()</slot>
     </connection>
+    <connection>
+        <sender>buttonAddVideo</sender>
+        <signal>clicked()</signal>
+        <receiver>ConfigDialog</receiver>
+        <slot>extAddVideoClicked()</slot>
+    </connection>
+    <connection>
+        <sender>buttonRemoveVideo</sender>
+        <signal>clicked()</signal>
+        <receiver>ConfigDialog</receiver>
+        <slot>extRemoveVideoClicked()</slot>
+    </connection>
 </connections>
 <includes>
     <include location="local" impldecl="in declaration">qfiledialog.h</include>
@@ -715,7 +826,9 @@
     <slot access="private">musicBrowseClicked()</slot>
     <slot access="private">videoBrowseClicked()</slot>
     <slot access="private">extAddClicked()</slot>
+    <slot>extAddVideoClicked()</slot>
     <slot access="private">extRemoveClicked()</slot>
+    <slot>extRemoveVideoClicked()</slot>
     <slot access="private">synchDBClicked()</slot>
     <slot access="private">okClicked()</slot>
     <slot access="private">skinSelect( int item )</slot>

@@ -73,7 +73,8 @@ void restoreOutput(QWidget *w)
 			  (void*)(w->winId()));
 }
 
-MediaPlayer::MediaPlayer() : FunctionScreen("MediaPlayer")
+MediaPlayer::MediaPlayer(QWidget* parent) 
+  : FunctionScreen("MediaPlayer", parent)
 {
   setPaletteBackgroundColor(QColor(0,0,0));
   resize(menu->size().width(), menu->size().height());
@@ -125,6 +126,7 @@ MediaPlayer::MediaPlayer() : FunctionScreen("MediaPlayer")
 void MediaPlayer::init() 
 {
   connect( qApp, SIGNAL(aboutToQuit()), this, SLOT(cleanup()) );
+  videoPanel->init();
 }
 
 void MediaPlayer::cleanup() 
@@ -263,19 +265,20 @@ void MediaPlayer::volumeMute()
 
 void MediaPlayer::showAsVis()
 {
-  if (panel_on) activePanel->hide();    
   activePanel = visPanel;
-  if (panel_on) activePanel->show();    
+  activePanel->display();    
+  panel_on = true;
   display();
 }
 
 void MediaPlayer::showAsDVD() 
 {
-  if (panel_on) activePanel->hide();    
   activePanel = dvdPanel;
-  if (panel_on) activePanel->show();    
+  activePanel->display();    
+  panel_on = true;
+  display();
   closeItem();
-  MediaItem dvd(-1,"","","DVD","","dvd://");
+  MediaItem dvd(-1,QString("dvd://"), QString(""),QString(""),QString("DVD"),QString(""));
   openItem(dvd);
   play();
   display();
@@ -283,10 +286,20 @@ void MediaPlayer::showAsDVD()
 
 void MediaPlayer::showAsVideo() 
 {
-  if (panel_on) activePanel->hide();    
   activePanel = videoPanel;
-  if (panel_on) activePanel->show();    
+  activePanel->display();    
+  panel_on = true;
   display();
+}
+
+bool MediaPlayer::nextChapter()
+{
+  return false;
+}
+
+bool MediaPlayer::prevChapter()
+{
+  return false;
 }
 
 void MediaPlayer::moveEvent ( QMoveEvent *e ) 

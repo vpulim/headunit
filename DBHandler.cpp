@@ -37,11 +37,19 @@ DBHandler::~DBHandler()
 
 void DBHandler::loadAppState() 
 {
-  appState->folderPath = loadStateValue( "folderPath" );
-  appState->folderPlus = loadStateValue( "folderPlus" , "0").toInt();
-  appState->folderIndex = loadStateValue( "folderIndex" , "0").toInt();
+  appState->musicPath = loadStateValue( "musicPath" );
+  appState->musicPlus = loadStateValue( "musicPlus" , "0").toInt();
+  appState->musicIndex = loadStateValue( "musicIndex" , "0").toInt();
+  appState->musicPos = loadStateValue( "musicPos", "0").toLong();
+  appState->videoPath = loadStateValue( "videoPath" );
+  appState->videoIndex = loadStateValue( "videoIndex" , "0").toInt();
+  appState->videoPos = loadStateValue( "videoPos", "0").toLong();
   appState->playMode = loadStateValue( "playMode", "0").toInt();
   appState->volume = loadStateValue( "volume", "50").toInt();
+  appState->function = loadStateValue( "function", "0").toInt();
+  if ((appState->function==ApplicationState::MUSIC && appState->musicPos<0) ||
+      (appState->function==ApplicationState::VIDEO && appState->videoPos<0))
+    appState->function = ApplicationState::NONE;
 }
 
 void DBHandler::saveAppState() 
@@ -49,31 +57,39 @@ void DBHandler::saveAppState()
   QSqlQuery q;
   q.exec(TRUNCATE_STATE_TABLE);
   q.exec(CREATE_STATE_TABLE);
-  saveStateValue( "folderPath", appState->folderPath );
-  saveStateValue( "folderPlus", QString::number(appState->folderPlus ? 1 : 0) );
-  saveStateValue( "folderIndex", QString::number(appState->folderIndex) );
+  saveStateValue( "musicPath", appState->musicPath );
+  saveStateValue( "musicPlus", QString::number(appState->musicPlus ? 1 : 0) );
+  saveStateValue( "musicIndex", QString::number(appState->musicIndex) );
+  saveStateValue( "musicPos", QString::number(appState->musicPos) );
+  saveStateValue( "videoPath", appState->videoPath );
+  saveStateValue( "videoIndex", QString::number(appState->videoIndex) );
+  saveStateValue( "videoPos", QString::number(appState->videoPos) );
   saveStateValue( "playMode", QString::number(appState->playMode) );
   saveStateValue( "volume", QString::number(appState->volume) );
+  saveStateValue( "function", QString::number(appState->function) );
 }
 
-void DBHandler::populateDB(const QString& musicPath, const QString& videoPath, const QString& extensions, bool parseID3) 
+void DBHandler::populateDB(const QString& musicPath, const QString& videoPath, 
+			   const QString& musicExt, const QString& videoExt,
+			   bool parseID3) 
 {    
   numFiles = 0;
   QSqlQuery q;
-  q.exec(TRUNCATE_MUSIC_TABLE);
-  q.exec(CREATE_MUSIC_TABLE);
-  q.exec(CREATE_MUSIC_INDEX);
-  q.exec(TRUNCATE_ALBUMART_TABLE);
-  q.exec(CREATE_ALBUMART_TABLE);
-  subPopulate( musicPath, videoPath, extensions, parseID3 );
+  q.exec(TRUNCATE_MEDIA_TABLE);
+  q.exec(CREATE_MEDIA_TABLE);
+  q.exec(CREATE_MEDIA_INDEX);
+  q.exec(TRUNCATE_COVERART_TABLE);
+  q.exec(CREATE_COVERART_TABLE);
+  subPopulateDB( musicPath, musicExt, parseID3 );
+  subPopulateDB( videoPath, videoExt, FALSE );
 }
 
-void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, const QString& extensions, bool parseID3) 
+void DBHandler::subPopulateDB(const QString& mediaPath, const QString& extensions, bool parseID3) 
 {    
-  if ( musicPath == QString::null )
+  if ( mediaPath == QString::null )
 	  return;
 
-  QFileInfo info(musicPath);
+  QFileInfo info(mediaPath);
   if (!info.isDir()) {
     qWarning("processing: %s", info.absFilePath().latin1());
     QString artist = "Unknown", title = info.baseName(TRUE);
@@ -91,7 +107,7 @@ void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, 
     }
     
     QSqlQuery query;
-    query.prepare(INSERT_MUSIC_ITEM);
+    query.prepare(INSERT_MEDIA_ITEM);
     query.bindValue(":key", info.dirPath(TRUE));
     query.bindValue(":artist", artist);
     query.bindValue(":album", album);
@@ -117,7 +133,7 @@ void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, 
   }
 //    qWarning("exts: '%s'",extensions.latin1());
   QString extPlusJPG = extensions + " *.jpg";
-  QDir dir(musicPath,extPlusJPG.latin1(), QDir::DirsFirst);
+  QDir dir(mediaPath,extPlusJPG.latin1(), QDir::DirsFirst);
   dir.setMatchAllDirs(true);
   if (!dir.isReadable()) {
     qWarning("directory is not readable: %s", info.absFilePath().latin1());
@@ -134,7 +150,7 @@ void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, 
 	saveAlbumArt(key, image);
       }
       else
-	subPopulate( fi->absFilePath(), videoPath, extensions, parseID3 );
+	subPopulateDB( fi->absFilePath(), extensions, parseID3 );
     }
   }
   return;
@@ -145,13 +161,13 @@ bool DBHandler::isEmpty(void)
   return (db->tables().empty());
 }
 
-bool DBHandler::loadMusicList(const QString& path, bool plus, MediaList& list)
+bool DBHandler::loadMediaList(const QString& path, bool plus, MediaList& list)
 {
   QString key = path;
   if (plus)
     key += "%";
   QSqlQuery q;
-  q.prepare(QUERY_MUSIC_ITEM_BY_KEY);
+  q.prepare(QUERY_MEDIA_ITEM_BY_KEY);
   q.bindValue(":key", key);
   QString queryString = q.lastQuery();
   q.exec();
@@ -174,7 +190,7 @@ bool DBHandler::loadMusicList(const QString& path, bool plus, MediaList& list)
 QString DBHandler::getKeyForId(int id)
 {
   QSqlQuery q;
-  q.prepare(QUERY_MUSIC_ITEM_BY_ID);
+  q.prepare(QUERY_MEDIA_ITEM_BY_ID);
   q.bindValue(":id", id);
   q.exec();
   if (q.isActive()) {
@@ -189,7 +205,7 @@ QString DBHandler::getKeyForId(int id)
 MediaItem DBHandler::loadMediaItem(int id)
 {
   QSqlQuery q;
-  q.prepare(QUERY_MUSIC_ITEM_BY_ID);
+  q.prepare(QUERY_MEDIA_ITEM_BY_ID);
   q.bindValue(":id", id);
   q.exec();
   if (q.isActive()) {
@@ -205,6 +221,31 @@ MediaItem DBHandler::loadMediaItem(int id)
   }
   MediaItem mi;
   return mi;
+}
+
+QString DBHandler::firstFolderByPath(QString& path)
+{
+  QSqlQuery q;
+  q.prepare(QUERY_MEDIA_ITEM_BY_KEY);
+  q.bindValue(":key", path + "%");
+  q.exec();
+  if (q.isActive()) {
+    if (q.next()) {
+      QString key = q.value(6).toString();
+      return key;
+    }    
+  }
+  return QString::null;  
+}
+
+QString DBHandler::firstMusicFolder()
+{
+  return firstFolderByPath(settings.readEntry("headunit/musicpath"));
+}
+
+QString DBHandler::firstVideoFolder()
+{
+  return firstFolderByPath(settings.readEntry("headunit/videopath"));
 }
 
 QString DBHandler::loadStateValue(const QString& var, const QString& def)
@@ -233,7 +274,7 @@ void DBHandler::saveStateValue(const QString& var, const QString& value)
 QPixmap DBHandler::loadAlbumArt(const QString& key) 
 {
   QSqlQuery q;
-  q.prepare(QUERY_ALBUMART);
+  q.prepare(QUERY_COVERART);
   q.bindValue(":key", key);
   q.exec();  
   QPixmap image;
@@ -272,7 +313,7 @@ void DBHandler::saveAlbumArt(QString& key, QPixmap& image)
 					  (uchar *)dataBuffer.data());
   dataBuffer.truncate(encodedSize);
   QSqlQuery q;
-  q.prepare(INSERT_ALBUMART);
+  q.prepare(INSERT_COVERART);
   q.bindValue(":key", key);
   q.bindValue(":image", QString(dataBuffer));
   q.exec();  

@@ -7,14 +7,17 @@
 #include "MenuScreen.h"
 #include "AudioPlayerScreen.h"
 #include "AudioBrowserScreen.h"
+#include "VideoBrowserScreen.h"
 #include "MediaPlayer.h"
 #include "DBHandler.h"
 #include "ConfigDialog.h"
 #include "ApplicationState.h"
 
+FunctionScreen *top = NULL;
 MenuScreen *menu = NULL;
 AudioPlayerScreen *audioPlayer = NULL;
 AudioBrowserScreen *audioBrowser = NULL;
+VideoBrowserScreen *videoBrowser = NULL;
 MediaPlayer *mediaPlayer = NULL;
 ConfigDialog *configDialog;
 DBHandler *dbHandler;
@@ -26,24 +29,39 @@ QSettings settings;
 
 int initializeGui()
 {
-  menu = new MenuScreen();
-  audioPlayer = new AudioPlayerScreen();
-  audioBrowser = new AudioBrowserScreen();
-  mediaPlayer = new MediaPlayer();
+  top = new FunctionScreen("HeadUnit");
+  menu = new MenuScreen(top);
+  audioPlayer = new AudioPlayerScreen(top);
+  audioBrowser = new AudioBrowserScreen(top);
+  videoBrowser = new VideoBrowserScreen(top);
+  mediaPlayer = new MediaPlayer(top);
 
   menu->init();
   audioPlayer->init();
   audioBrowser->init();
+  videoBrowser->init();
   mediaPlayer->init();
   
   if (menu->isNull() || 
       audioPlayer->isNull() || 
       audioBrowser->isNull() || 
+      videoBrowser->isNull() ||
       mediaPlayer->isNull())
     return ERROR;
   
-  menu->raise();
-  menu->show();
+  top->display();
+  menu->display();
+
+  switch (appState->function) {
+  case ApplicationState::MUSIC:
+    audioPlayer->display();
+    break;
+  case ApplicationState::VIDEO:
+    mediaPlayer->showAsVideo();
+    break;
+  default:
+    break;
+  }
 
   return 0;
 }
@@ -53,7 +71,9 @@ void destroyGui()
   QDESTROY(mediaPlayer);
   QDESTROY(audioPlayer);
   QDESTROY(audioBrowser);
+  QDESTROY(videoBrowser);
   QDESTROY(menu);
+  QDESTROY(top);
 }
 
 int main( int argc, char **argv )
@@ -72,7 +92,7 @@ int main( int argc, char **argv )
   QObject::connect(qApp, SIGNAL(aboutToQuit()), dbHandler, SLOT(saveAppState()) );
 
   if (initializeGui()==ERROR)
-      return ERROR;
+      return ERROR;  
   
   return a.exec();    
 }

@@ -4,6 +4,7 @@
 #include "HeadUnit.h"
 #include "MenuScreen.h"
 #include "AudioPlayerScreen.h"
+#include "VideoBrowserScreen.h"
 #include "Skin.h"
 #include "MediaPlayer.h"
 #include "ConfigDialog.h"
@@ -15,7 +16,7 @@ const char *MenuScreen::keys[MenuScreen::NUM_BUTTONS] =
 const char *MenuScreen::labelKeys[MenuScreen::NUM_LABELS] = 
   {"TIME","DATE"};
 
-MenuScreen::MenuScreen() : FunctionScreen("Menu")
+MenuScreen::MenuScreen(QWidget* parent) : FunctionScreen("Menu", parent)
 {
   Skin skin("menu.skin");
   if (skin.isNull()) {
@@ -40,7 +41,6 @@ void MenuScreen::init() {
   connect( buttons[AUDIO], SIGNAL(clicked()), audioPlayer, SLOT(display()) );
 //  connect( buttons[AUDIO], SIGNAL(clicked()), this, SLOT(hide()) );
   connect( buttons[VIDEO], SIGNAL(clicked()), mediaPlayer, SLOT(showAsVideo()) );
-//  connect( buttons[VIDEO], SIGNAL(clicked()), this, SLOT(hide()) );
   connect( buttons[DVD], SIGNAL(clicked()), mediaPlayer, SLOT(showAsDVD()) );
 //  connect( buttons[DVD], SIGNAL(clicked()), this, SLOT(hide()) );
   connect( buttons[VOLUP], SIGNAL(clicked()), mediaPlayer, SLOT(volumeUp()) );

@@ -13,3 +13,12 @@ VisPanel::VisPanel(QWidget *parent)
   connect( buttons[EXIT], SIGNAL(clicked()), parent, SLOT(lower()) );
 }
 
+bool VisPanel::next() 
+{
+  return true;
+}
+
+bool VisPanel::previous() 
+{
+  return true;
+}

@@ -4,6 +4,7 @@ LANGUAGE	= C++
 INCLUDEPATH	+= .
 
 HEADERS	+= AudioBrowserScreen.h \
+        VideoBrowserScreen.h \
 	AudioPlayerScreen.h \
 	Button.h \
 	DVDPanel.h \
@@ -24,6 +25,7 @@ HEADERS	+= AudioBrowserScreen.h \
         Tag.h
 
 SOURCES	+= AudioBrowserScreen.cpp \
+        VideoBrowserScreen.cpp \
 	AudioPlayerScreen.cpp \
 	Button.cpp \
 	DVDPanel.cpp \

@@ -4,11 +4,18 @@
 class ApplicationState
 {
   public:
-    QString folderPath;
-    bool folderPlus;
-    int folderIndex;
+    QString musicPath;
+    bool musicPlus;
+    int musicIndex;
+    long musicPos;
+    QString videoPath;
+    int videoIndex;
+    long videoPos;
     int playMode;
     int volume;
+    int function;
+
+    enum { NONE = 0, MUSIC, VIDEO, DVD, NUM_FUNCTIONS };
 };
 
 #endif

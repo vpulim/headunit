@@ -24,7 +24,8 @@ const char *AudioPlayerScreen::indicatorKeys[AudioPlayerScreen::NUM_INDICATORS] 
 
 const char *AudioPlayerScreen::slKey = "S01";
 
-AudioPlayerScreen::AudioPlayerScreen() : FunctionScreen("AudioPlayer")
+AudioPlayerScreen::AudioPlayerScreen(QWidget* parent) 
+  : FunctionScreen("AudioPlayer", parent)
 {
   Skin skin("Audio_Player.skin");
   if (skin.isNull()) {
@@ -75,14 +76,31 @@ void AudioPlayerScreen::init() {
   connect(buttons[VOLDN], SIGNAL(clicked()), mediaPlayer, SLOT(volumeDown()) );
   connect(buttons[MUTE], SIGNAL(clicked()), mediaPlayer, SLOT(volumeMute()) );
   connect(buttons[VISU], SIGNAL(clicked()), mediaPlayer, SLOT(showAsVis()) );
-  connect(audioBrowser, SIGNAL(folderSelected(QString&, bool, int)), 
-	  this, SLOT(loadFolder(QString&, bool, int)));
+  connect(audioBrowser, SIGNAL(folderSelected(QString&, bool, int, long)), 
+	  this, SLOT(loadFolder(QString&, bool, int, long)));
   connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateInfo()));
   updateTimer->changeInterval(UPDATE_DELAY);
 
-  loadFolder(appState->folderPath, appState->folderPlus, appState->folderIndex);
+  loadFolder(appState->musicPath, appState->musicPlus, appState->musicIndex,
+	     appState->musicPos);
   playMode = (appState->playMode + NUM_MODES - 1) % NUM_MODES;
   changeMode();  // to draw the right indicator
+}
+
+void AudioPlayerScreen::display()
+{
+  appState->function = ApplicationState::MUSIC;
+  if (mediaPlayer->isPlaying()) {
+    if (!mediaPlayer->isAudio()) {
+      mediaPlayer->closeItem();
+      loadFolder(appState->musicPath,appState->musicPlus,appState->musicIndex,
+		 appState->musicPos);
+    }
+  }
+  else {
+    play();
+  }
+  FunctionScreen::display();
 }
 
 void AudioPlayerScreen::play()
@@ -94,14 +112,14 @@ void AudioPlayerScreen::play()
     listView->setCurrentItem(0);
     index = 0;
   }
-  appState->folderIndex = index;
+  appState->musicIndex = index;
   mediaPlayer->openItem(playList[index]);
   mediaPlayer->play();
 }
 
 void AudioPlayerScreen::playpause()
 {
-  if (appState->folderIndex == listView->currentItem()) {
+  if (appState->musicIndex == listView->currentItem()) {
     if (mediaPlayer->isPlaying())
       mediaPlayer->pause();
     else if (mediaPlayer->isPaused())
@@ -116,6 +134,7 @@ void AudioPlayerScreen::playpause()
 void AudioPlayerScreen::stop()
 {  
   mediaPlayer->stop();
+  appState->musicPos = -1;
 }
 
 bool AudioPlayerScreen::previous()
@@ -127,7 +146,7 @@ bool AudioPlayerScreen::previous()
     listView->setCurrentItem(shuffleList[shufflePos]);
   }
   else {
-    listView->setCurrentItem(appState->folderIndex);
+    listView->setCurrentItem(appState->musicIndex);
     if (!listView->scrollUp()) {
       if (playMode == MODE_REPEAT)
         listView->setCurrentItem(listView->count()-1);
@@ -149,7 +168,7 @@ bool AudioPlayerScreen::next()
     listView->setCurrentItem(shuffleList[shufflePos]);
   }
   else {
-    listView->setCurrentItem(appState->folderIndex);
+    listView->setCurrentItem(appState->musicIndex);
     if (!listView->scrollDown()) {
       if (playMode == MODE_REPEAT)
         listView->setCurrentItem(0);
@@ -212,15 +231,17 @@ void AudioPlayerScreen::endOfStreamReached()
   next();
 }
 
-void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index)
+void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index, long pos)
 {
   QString p = path;
   if (path.isNull()) {
-    // if the path is null, load first folder in database
-    p = dbHandler->getKeyForId(1);
+    // if the path is null, load first music folder in database
+    p = dbHandler->firstMusicFolder();
     plus = false;
+    pos = -1;
+    index = 0;
   }
-  dbHandler->loadMusicList(p, plus, playList);
+  dbHandler->loadMediaList(p, plus, playList);
 
   // setup random shuffle list
   int *temp = (int *)malloc(sizeof(int)*playList.size());
@@ -249,17 +270,20 @@ void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index)
   }
 
   listView->setCurrentItem(index);
-  appState->folderPath = p;
-  appState->folderPlus = plus;
-  appState->folderIndex = index;
-  play();
+  appState->musicPath = p;
+  appState->musicPlus = plus;
+  appState->musicIndex = index;
+  if (appState->function == ApplicationState::MUSIC && pos != -1) {
+    play();
+    mediaPlayer->setPosition(pos);
+  }
 }
 
 void AudioPlayerScreen::updateInfo()
 {
   long pos = 0, len = 0;
-  if (mediaPlayer->isOpened()) {
-    mediaPlayer->getPosition(&pos,&len);
+  if (mediaPlayer->isPlaying() && mediaPlayer->getPosition(&pos,&len)) {
+    appState->musicPos = pos;
   }
   QTime zero;
   labels[TRACKNAME]->setText(mediaPlayer->getOpened().displayText());

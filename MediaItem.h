@@ -20,6 +20,7 @@ class MediaItem
   QString title() const { return _title; };
   QString genre() const { return _genre; };
   QString mrl() const { return _mrl; };
+  QString fileName() const;
   QString displayText();
   bool isNull() { return _mrl.isNull(); };
 

@@ -21,12 +21,13 @@ class AudioPlayerScreen : public FunctionScreen
 {
   Q_OBJECT
  public:
-  AudioPlayerScreen();
+  AudioPlayerScreen(QWidget* parent = 0);
   void init();
 
  public slots:
   void endOfStreamReached();
-  void loadFolder(QString& path, bool plus, int index);
+  void loadFolder(QString& path, bool plus, int index, long pos);
+  void display();
 
  private slots:
   void play();

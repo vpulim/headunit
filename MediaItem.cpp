@@ -40,10 +40,21 @@ MediaItem &MediaItem::operator= (const MediaItem &m)
 	return *this;
 }
 
-QString MediaItem::displayText() {
+QString MediaItem::displayText() 
+{
   if (isNull())
     return QString::null;
+  if (_mrl.startsWith("dvd://"))
+    return QString("DVD");
   if (_artist == "Unknown")
     return _title;
   return _artist + " - " + _title;
 };
+
+QString MediaItem::fileName() const
+{   
+  if (_mrl.isNull() || !_mrl.startsWith("file://"))
+    return QString("");
+  QString name = _mrl.mid(7);
+  return name;
+}

@@ -10,7 +10,7 @@ class MenuScreen : public FunctionScreen
 {
   Q_OBJECT
  public:
-  MenuScreen();
+  MenuScreen(QWidget* parent = 0);
   void init();
 
  private slots:
