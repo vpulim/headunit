@@ -312,11 +312,8 @@ void XineVideo::resizeEvent ( QResizeEvent *e )
 {
   xw = e->size().width();
   xh = e->size().height();
-  visPanel->resize(e->size().width(), 200);
   visPanel->move(0,e->size().height() - visPanel->size().height());
-  dvdPanel->resize(e->size().width(), 200);
   dvdPanel->move(0,e->size().height() - dvdPanel->size().height());
-  videoPanel->resize(e->size().width(), 200);
   videoPanel->move(0,e->size().height() - videoPanel->size().height());
 }
 
