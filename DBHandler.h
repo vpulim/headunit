@@ -4,7 +4,7 @@
 // File table
 #define CREATE_MUSIC_TABLE "create table music (id integer primary key, key text, artist text, album text, title text, genre text, mrl text)"
 #define CREATE_MUSIC_INDEX "create index key_index on music(key)"
-#define TRUNCATE_MUSIC_TABLE "truncate table music"
+#define TRUNCATE_MUSIC_TABLE "drop table music"
 #define INSERT_MUSIC_ITEM "insert into music (key, artist, album, title, genre, mrl) VALUES (:key, :artist, :album, :title, :genre, :mrl)"
 #define QUERY_MUSIC_ITEM_BY_MRL "select id, mrl, artist, album, title, genre, key from music where mrl = :mrl"
 #define QUERY_MUSIC_ITEM_BY_KEY "select id, mrl, artist, album, title, genre, key from music where key like :key"
@@ -12,13 +12,13 @@
 
 // Playlist table
 #define CREATE_PLAYLIST_TABLE "create table playlist (id integer primary key, mrl text)"
-#define TRUNCATE_PLAYLIST_TABLE "truncate table playlist"
+#define TRUNCATE_PLAYLIST_TABLE "drop table playlist"
 #define INSERT_PLAYLIST "insert into playlist (mrl) values (:mrl)"
 #define QUERY_PLAYLIST "select mrl from playlist"
 
 // State table
 #define CREATE_STATE_TABLE "create table state (var text primary key, value text)"
-#define TRUNCATE_STATE_TABLE "truncate table state"
+#define TRUNCATE_STATE_TABLE "drop table state"
 #define INSERT_STATE "insert into state (var,value) values (:var,:value)"
 #define QUERY_STATE "select value from state where var = :var"
 
