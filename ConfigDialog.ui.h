@@ -16,7 +16,7 @@ void ConfigDialog::init()
     
     // load file extensions
     QString extensions = settings.readEntry( "/headunit/extensions", "mp3;wma;avi;mpg" );
-    QStringList list = QStringList::split(";", settings.readEntry( "/headunit/extensions" ));
+    QStringList list = QStringList::split(";", extensions);
     listExtensions->insertStringList(list);
     
     // load media paths
