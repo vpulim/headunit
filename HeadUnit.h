@@ -1,17 +1,19 @@
 #ifndef HEADUNIT_H
 #define HEADUNIT_H
 
+#include <qapplication.h>
+#include <qsettings.h>
+
 extern class MenuScreen *menu;
 extern class AudioPlayerScreen *audioPlayer;
 extern class AudioBrowserScreen *audioBrowser;
 extern class MediaPlayer *mediaPlayer;
-extern class QSqlDatabase *db;
+extern class ConfigDialog *configDialog;
+extern class DBHandler *dbHandler;
 extern class QSettings settings;
-
-#ifdef Q_WS_WIN
-#define DB_DRIVER "QSQLITEX"
-#else
-#define DB_DRIVER "QSQLITE"
-#endif
+	
+QString getMediaPath(void);
+QString askMediaPath(void);
+void setMediaPath(QString path);
 
 #endif 

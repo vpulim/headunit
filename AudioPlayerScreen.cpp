@@ -1,7 +1,7 @@
 #include <qapplication.h>
 #include <qtimer.h>
 #include <qdatetime.h>
-#include <qsqldatabase.h>
+#include "DBHandler.h"
 #include "HeadUnit.h"
 #include "MenuScreen.h"
 #include "AudioPlayerScreen.h"
@@ -22,7 +22,7 @@ const char *AudioPlayerScreen::slKey = "S01";
 
 #define QUERY_MUSIC_ITEM "select artist, album, title, genre from music "
 #define CREATE_PLAYLIST "create table playlist (id integer primary key, mrl text)"
-#define INSERT_PLAYLIST "insert into playlist (mrl) values"
+#define INSERT_PLAYLIST "insert into playlist (mrl) values (:mrl)"
 #define QUERY_PLAYLIST "select mrl from playlist"
 #define DROP_PLAYLIST "drop table playlist"
 
@@ -136,14 +136,19 @@ void AudioPlayerScreen::loadPlayList()
 
 void AudioPlayerScreen::savePlayList()
 {
-  db->exec( DROP_PLAYLIST );
-  db->exec( CREATE_PLAYLIST );
+  QSqlQuery query;
+  
+  query.prepare( DROP_PLAYLIST );
+  query.exec();
+  query.prepare( CREATE_PLAYLIST );
+  query.exec();
+    
   MediaItem *mi;
-  char buf[1024];
   for (uint i=0; i<playList->count(); i++) {
     mi = (MediaItem *)(playList->item(i));
-    sprintf(buf, "%s ('%s')", INSERT_PLAYLIST, mi->mrl().latin1());
-    db->exec( buf );
+    query.prepare( INSERT_PLAYLIST );
+    query.bindValue(":mrl",mi->mrl().latin1());
+    query.exec();
   }
 }
 
