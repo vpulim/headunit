@@ -41,6 +41,7 @@ Section "HeadUnit (required)"
   File "headunit.exe"
   File "D:\QT\3.2.1NonCommercial\bin\qt-mtnc321.dll"
   File "C:\WINDOWS\system32\msvcp70.dll"
+  CreateDirectory $INSTDIR\plugins\sqldrivers
   File /oname=plugins\sqldrivers\qsqlite.dll "D:\QT\3.2.1NonCommercial\plugins\sqldrivers\qsqlite.dll"
 
   ; Write the installation path into the registry
