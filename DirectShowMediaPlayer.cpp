@@ -172,7 +172,7 @@ void MediaPlayer::setVolume(int volume)
 { 
   if (volume > 100)
     volume = 100;
-  if (volume < 0)
+  else if (volume < 0)
     volume = 0;
   appState->volume = this->volume = volume;
   if (basicAudio)
@@ -288,7 +288,7 @@ void MediaPlayer::mouseReleaseEvent ( QMouseEvent * e )
 void MediaPlayer::keyPressEvent ( QKeyEvent * e )
 {
   if (e->key() == Qt::Key_Escape) {
-    hide();
-    menu->show();
+    lower();
+    // menu->show();
   }
 }

@@ -9,6 +9,7 @@
 #include "MediaPlayer.h"
 #include "HeadUnit.h"
 #include "MenuScreen.h"
+#include "ApplicationState.h"
 
 static xine_t *xine;
 static x11_visual_t vis;
@@ -111,14 +112,13 @@ MediaPlayer::MediaPlayer() : FunctionScreen("MediaPlayer")
     xine_post_wire(xine_get_audio_source (audio_stream), (xine_post_in_t *) xine_post_input (plugin, (char *) "audio in"));
   //  event_queue = xine_event_new_queue(stream);
   //  xine_event_create_listener_thread(event_queue, event_listener, NULL);
-  volume = 100;
-  volumeUp();
-  mute = false;
+  setVolume(appState->volume);
+  mute = 0;
 
   openedItem = MediaItem::null;
-  playing = false;
+  playState = STOPPED;
   panel_on = false;
-  
+
   valid = true;
 }
 
@@ -138,15 +138,29 @@ void MediaPlayer::cleanup()
   xine_exit(xine);
 }
 
-bool MediaPlayer::getPosition(int *pos, int *len)
+bool MediaPlayer::getPosition(long *pos, long *len)
 {
   int pos_stream;
+  *pos = 0;
+  *len = 0;
   if (openedItem.isNull()) {
-    *pos = 0;
-    *len = 0;
     return false;
   }
-  return xine_get_pos_length (stream, &pos_stream, pos, len) == 1;
+  int p, l;
+  if(!xine_get_pos_length (stream, &pos_stream, &p, &l)) {
+    return false;
+  }
+  *pos = p;
+  *len = l;
+  return true;
+}
+
+bool MediaPlayer::setPosition(long pos)
+{
+  if (openedItem.isNull()) {
+    return false;
+  }
+  return xine_play (stream, 0, pos);
 }
 
 void MediaPlayer::open(const MediaItem &mi) 
@@ -172,7 +186,6 @@ void MediaPlayer::open(const MediaItem &mi)
     }
   }
   openedItem = mi;
-  playing = false;
 }
 
 void MediaPlayer::close() 
@@ -180,57 +193,71 @@ void MediaPlayer::close()
   if (!openedItem.isNull())
     xine_close(stream);
   openedItem = MediaItem::null;
-  playing = false;
+  playState = STOPPED;
 }
 
 void MediaPlayer::play() 
 {
-  if (openedItem.isNull() || playing)
+  if (openedItem.isNull() || playState == PLAYING)
     return;
-   if (!xine_play(stream, 0, 0)) {
+  if (playState == PAUSED) {
+    xine_set_param (stream, XINE_PARAM_SPEED, XINE_SPEED_NORMAL);
+  }
+  else if (!xine_play(stream, 0, 0)) {
     qWarning("Unable to play");
     return;
   }  
-  playing = true;
+  playState = PLAYING;
+}
+
+void MediaPlayer::pause() 
+{
+  if (openedItem.isNull() || playState != PLAYING)
+    return;
+  xine_set_param (stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
+  playState = PAUSED;
 }
 
 void MediaPlayer::stop() 
 {
-  playing = false;
+  playState = STOPPED;
   if (openedItem.isNull())
     return;
   xine_stop(stream);
 }
 
-void MediaPlayer::volumeUp()
-{
-  volume += 5;
+void MediaPlayer::setVolume(int volume)
+{ 
   if (volume > 100)
     volume = 100;
+  else if (volume < 0)
+    volume = 0;
+  appState->volume = this->volume = volume;
   xine_set_param (audio_stream, XINE_PARAM_AUDIO_VOLUME, volume);  
   xine_set_param (av_stream, XINE_PARAM_AUDIO_VOLUME, volume);  
 }
 
+void MediaPlayer::volumeUp()
+{
+  if (mute) volumeMute();  // unmute if muted
+  setVolume(volume + 5); 
+}
+
 void MediaPlayer::volumeDown()
 {
-  volume -= 5;
-  if (volume < 0)
-    volume = 0;
-  xine_set_param (audio_stream, XINE_PARAM_AUDIO_VOLUME, volume);  
-  xine_set_param (av_stream, XINE_PARAM_AUDIO_VOLUME, volume);  
+  if (mute) volumeMute();  // unmute if muted
+  setVolume(volume - 5); 
 }
 
 void MediaPlayer::volumeMute()
 {
   if (!mute) {
-    xine_set_param (audio_stream, XINE_PARAM_AUDIO_VOLUME, 0);  
-    xine_set_param (av_stream, XINE_PARAM_AUDIO_VOLUME, 0);  
-    mute = true;
+    mute = volume;
+    setVolume(0);
   }
   else {
-    xine_set_param (audio_stream, XINE_PARAM_AUDIO_VOLUME, volume);  
-    xine_set_param (av_stream, XINE_PARAM_AUDIO_VOLUME, volume);  
-    mute = false;
+    setVolume(mute);
+    mute = 0;
   }
 }
 
@@ -239,7 +266,7 @@ void MediaPlayer::showAsVis()
   if (panel_on) activePanel->hide();    
   activePanel = visPanel;
   if (panel_on) activePanel->show();    
-  show();
+  display();
 }
 
 void MediaPlayer::showAsDVD() 
@@ -248,10 +275,10 @@ void MediaPlayer::showAsDVD()
   activePanel = dvdPanel;
   if (panel_on) activePanel->show();    
   close();
-  MediaItem dvd("dvd://","","","","");
+  MediaItem dvd(-1,"","","DVD","","dvd://");
   open(dvd);
   play();
-  show();
+  display();
 }
 
 void MediaPlayer::showAsVideo() 
@@ -259,7 +286,7 @@ void MediaPlayer::showAsVideo()
   if (panel_on) activePanel->hide();    
   activePanel = videoPanel;
   if (panel_on) activePanel->show();    
-  show();
+  display();
 }
 
 void MediaPlayer::moveEvent ( QMoveEvent *e ) 
@@ -292,7 +319,7 @@ void MediaPlayer::mouseReleaseEvent ( QMouseEvent * e )
 void MediaPlayer::keyPressEvent ( QKeyEvent * e )
 {
   if (e->key() == Qt::Key_Escape) {
-    hide();
-    menu->show();
+    lower();
+    // menu->show();
   }
 }

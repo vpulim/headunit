@@ -53,6 +53,7 @@ AudioPlayerScreen::AudioPlayerScreen() : FunctionScreen("AudioPlayer")
   updateTimer = new QTimer(this);
   valid = true;
   nextHeldLong = prevHeldLong = false;
+  diff = 0;
 }
 
 void AudioPlayerScreen::init() {
@@ -274,7 +275,7 @@ void AudioPlayerScreen::updateInfo()
   else if (mediaPlayer->isStopped())
     labels[STATUS]->setText("STOP");
   labels[VOLUME]->setText(QString::number(mediaPlayer->getVolume()) + "%");
-  if (mediaPlayer->isPlaying() && pos == len)
+  if (mediaPlayer->isPlaying() && len > 0 && pos > len - 2*UPDATE_DELAY)
     endOfStreamReached();
 
   // check if prev or next buttons are being held down
@@ -299,12 +300,24 @@ void AudioPlayerScreen::updateInfo()
       offset = MED_SEEK_MSECS;
     else if (prevPressTime.elapsed() > SLOW_SEEK_DELAY)
       offset = SLOW_SEEK_MSECS;
+    if (diff && offset) {
+      // this is a hack for xine, sine it takes a while for pos and len to
+      // be updated correctly
+      if (len > 0) {
+	mediaPlayer->setPosition(len - offset);
+	diff = 0;
+      }
+      return;
+    }
     if (offset) {
       if (pos - offset < 0) {
-        long diff = offset - pos;
+        diff = offset;
         if (previous()) {
           mediaPlayer->getPosition(&pos,&len);
-          mediaPlayer->setPosition(len - diff);
+	  if (len > 0) {
+	    mediaPlayer->setPosition(len - diff);
+	    diff = 0;
+	  }
         }
         else {
           mediaPlayer->setPosition(0);

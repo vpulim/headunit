@@ -68,8 +68,8 @@ class AudioPlayerScreen : public FunctionScreen
   QTime prevPressTime;
   bool prevHeldLong;   // used to prevent int overflow
   int playMode;
-
   QTimer *updateTimer;
+  long diff; // hack to get around a problem with Xine
 };
 
 #endif
