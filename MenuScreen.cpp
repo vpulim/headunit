@@ -50,7 +50,7 @@ void MenuScreen::init() {
   connect( buttons[EXIT], SIGNAL(clicked()), qApp, SLOT(quit()) );
   connect( buttons[APPEAR], SIGNAL(clicked()), configDialog, SLOT(show()) );
   connect( updateTimer, SIGNAL(timeout()), this, SLOT(updateInfo()));
-  connect( dbHandler, SIGNAL(dbStatus(int,QString)), configDialog, SLOT(currentStatus(int,QString)) );
+  connect( dbHandler, SIGNAL(dbStatus(int,QString&)), configDialog, SLOT(currentStatus(int,QString&)) );
   updateTimer->changeInterval(500);
 }
 

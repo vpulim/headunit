@@ -10,7 +10,7 @@
 
 static const QString default_extensions[]={"mp3","wma","avi","mpg"};
 
-void DBHandler::populateDB(QString path) 
+void DBHandler::populateDB(QString& path) 
 {    
     if ( path == QString::null )
 	return;

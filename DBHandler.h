@@ -20,9 +20,9 @@ private:
     int numFiles;
 public:
     DBHandler();
-    void populateDB(QString path);
+    void populateDB(QString& path);
     void resetDB(void);
 signals:
-    void dbStatus(int,QString);
+    void dbStatus(int,QString&);
 };
 #endif
