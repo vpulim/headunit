@@ -245,7 +245,7 @@ void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index)
   listView->clear();
   int size = playList.size();
   for (int i=0; i<size; i++) {
-    listView->insertItem(playList[i].artist() + " - " + playList[i].title());
+    listView->insertItem(QString::number(i+1)+". "+playList[i].artist() + " - " + playList[i].title());
   }
 
   listView->setCurrentItem(index);

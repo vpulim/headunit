@@ -6,6 +6,7 @@
 
 class Button;
 class SelectionList;
+class QLabel;
 
 class AudioBrowserScreen : public FunctionScreen
 {
@@ -28,9 +29,11 @@ class AudioBrowserScreen : public FunctionScreen
  private:
   void setDir(const QString &path);
   void folderSelect(bool plus);
+  void displayAlbumArt(const QString& key);
 
   enum {SELECT, PLUS, BACK, BROWSE, EXIT, PGDOWN, DOWN, UP, PGUP, NUM_BUTTONS};
   Button *buttons[NUM_BUTTONS];
+  QLabel *cover;
   MediaList musicList;
   SelectionList *listView;
   static const char *buttonKeys[NUM_BUTTONS];

@@ -46,9 +46,15 @@ void Button::setDownPixmap( const QPixmap &pixmap )
 void Button::drawButton( QPainter *paint )
 {
   if ((hasFocus() || isOn()) && onpixmap)
-    paint->drawPixmap(0, 0, *onpixmap);
+    //    paint->drawPixmap(0, 0, *onpixmap);
+    bitBlt(paint->device(), 0, 0, onpixmap, 
+	   0, 0, onpixmap->width(), onpixmap->height(), Qt::CopyROP, TRUE);
   else if (isDown() && downpixmap)
-    paint->drawPixmap(0, 0, *downpixmap);
+    //    paint->drawPixmap(0, 0, *downpixmap);
+    bitBlt(paint->device(), 0, 0, downpixmap, 
+	   0, 0, downpixmap->width(), downpixmap->height(), Qt::CopyROP, TRUE);
   else if (offpixmap)
-    paint->drawPixmap(0, 0, *offpixmap);
+    //    paint->drawPixmap(0, 0, *offpixmap);
+    bitBlt(paint->device(), 0, 0, offpixmap, 
+	   0, 0, offpixmap->width(), offpixmap->height(), Qt::CopyROP, TRUE);
 }

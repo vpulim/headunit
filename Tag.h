@@ -2,6 +2,7 @@
 #define TAG_H
 
 #include <qstring.h>
+#include <qpixmap.h>
 #include <id3/tag.h>
 
 class Tag
@@ -14,6 +15,7 @@ class Tag
   QString getAlbum() { return album; };
   QString getTitle() { return title; };
   QString getGenre() { return genre; };
+  QPixmap *getPicture() { return picture; };
 
  private:
   void parse();
@@ -23,6 +25,7 @@ class Tag
   QString album;
   QString title;
   QString genre;
+  QPixmap *picture;
 };
 
 #endif

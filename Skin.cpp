@@ -259,3 +259,29 @@ QLabel *Skin::getIndicator(const char *c, QWidget &parent)
   l->setFrameShadow(QFrame::Plain);
   return l;
 }
+
+QLabel *Skin::getAlbumArt(QWidget &parent)
+{
+  SkinItemList::const_iterator it = items.constBegin();
+  QStringList values;
+  while ( it != items.constEnd()) {
+    if ((*it)[0][0] == 'J')
+	  values = *it;
+    ++it;
+  }
+  if (values.empty()) {
+    qWarning("skin item (cover art) is not defined!");
+    return new QLabel(&parent);
+  }
+  QLabel *l = new QLabel(&parent);
+  int x = values[1].toInt();
+  int y = values[2].toInt();
+  int w = values[3].toInt();
+  int h = values[4].toInt();
+  l->move( x, y);
+  l->resize( w, h);
+  l->setPixmap(QPixmap(emptyImage->copy(x, y, w, h)));
+  l->setFrameShape(QFrame::NoFrame);
+  l->setFrameShadow(QFrame::Plain);
+  return l;
+}

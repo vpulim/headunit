@@ -22,40 +22,57 @@
 #define INSERT_STATE "insert into state (var,value) values (:var,:value)"
 #define QUERY_STATE "select value from state where var = :var"
 
+// Album art table
+#define CREATE_ALBUMART_TABLE "create table albumart (key text primary key, image blob)"
+#define TRUNCATE_ALBUMART_TABLE "drop table albumart"
+#define INSERT_ALBUMART "insert into albumart (key,image) values (:key,:image)"
+#define QUERY_ALBUMART "select image from albumart where key = :key"
+
 #ifdef Q_WS_WIN
 #define DB_DRIVER "QSQLITEX"
 #else
 #define DB_DRIVER "QSQLITE"
 #endif
 
+#define DATABUFFER_SIZE 50000
+
 #include <qsqldatabase.h>
+#include <qlabel.h>
+#include <qpixmap.h>
 
 class MediaItem;
 class MediaList;
 
 class DBHandler : public QObject {
   Q_OBJECT
-private:
-    QSqlDatabase *db;
-    int numFiles;
-	int valid;
-	void subPopulate(const QString& musicPath, const QString& videoPath, const QString& extList);
+ private:
+  QSqlDatabase *db;
+  int numFiles;
+  int valid;
+  QByteArray dataBuffer;
+
+  void subPopulate(const QString& musicPath, const QString& videoPath, const QString& extList);
   QString loadStateValue(const QString& var, const QString& def = QString::null);
   QString loadStateValue(const char *var, const char *def = NULL) { return loadStateValue(QString(var), def == NULL ? QString::null : QString(def)); };
   void saveStateValue(const QString& var, const QString& value);
   void saveStateValue(const char *var, const char *value) { saveStateValue(QString(var), QString(value)); };
   void saveStateValue(const char *var, const QString& value) { saveStateValue(QString(var), value); };
-public:
+  void saveAlbumArt(QString& key, QPixmap& image);
+
+ public:
   DBHandler();
-	bool isNull() { return valid; };
-	bool isEmpty();
+  ~DBHandler();
+  bool isNull() { return valid; };
+  bool isEmpty();
   bool loadMusicList(const QString& key, bool plus, MediaList& ml);
   QString getKeyForId(int id);
   MediaItem loadMediaItem(int id);
+  QPixmap loadAlbumArt(const QString& key);
+
 signals:
   void dbStatus(int,const QString&);
 public slots:
-	void populateDB(const QString& musicPath, const QString& videoPath, const QString& extList);
+  void populateDB(const QString& musicPath, const QString& videoPath, const QString& extList);
   void loadAppState();
   void saveAppState();
 };

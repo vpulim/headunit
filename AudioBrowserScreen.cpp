@@ -1,6 +1,8 @@
 #include <qapplication.h>
 #include <qsettings.h>
 #include <qdir.h>
+#include <qlabel.h>
+#include <qwmatrix.h>
 #include "HeadUnit.h"
 #include "AudioPlayerScreen.h"
 #include "AudioBrowserScreen.h"
@@ -28,6 +30,8 @@ AudioBrowserScreen::AudioBrowserScreen() : FunctionScreen("AudioBrowser")
   buttons[DOWN]->setAutoRepeat(true);
   buttons[PGUP]->setAutoRepeat(true);
   buttons[PGDOWN]->setAutoRepeat(true);
+
+  cover = skin.getAlbumArt(*this);
 
   listView = skin.getSelectionList(slKey, *this);
   rootDir = settings.readEntry( "headunit/musicpath" , "./" );
@@ -74,6 +78,8 @@ void AudioBrowserScreen::setDir(const QString &path)
         listView->insertDir(entry);
     ++it;
   }
+  
+  displayAlbumArt(currDir);
 
   // read files from database using current directory as key
   dbHandler->loadMusicList(currDir, false, musicList);
@@ -85,6 +91,24 @@ void AudioBrowserScreen::setDir(const QString &path)
 
 void AudioBrowserScreen::highlight(int index) 
 {
+  if (listView->isDir(index))
+    displayAlbumArt(currDir + "/" + listView->dir(index));
+}
+
+void AudioBrowserScreen::displayAlbumArt(const QString& key) {
+  QPixmap image = dbHandler->loadAlbumArt(key);
+  if (image.isNull()) {
+    cover->hide();
+  }
+  else {
+    double scalew = cover->width()/(double)image.width();
+    double scaleh = cover->height()/(double)image.height();
+    QWMatrix m;
+    m.scale(scalew,scaleh);
+    QPixmap scaled = image.xForm(m);
+    cover->setPixmap(scaled);
+    cover->show();
+  }
 }
 
 void AudioBrowserScreen::selectFolder() 
