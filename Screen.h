@@ -13,6 +13,7 @@ class FunctionScreen : public QFrame
 
  public slots:
   void display();
+  void hide();
 
  protected:
   bool valid; 

@@ -149,9 +149,9 @@ void MediaPlayer::showAsVis()
   activePanel = visPanel;
   panel_on = false;
   display();
-  videoPanel->lower();    
-  dvdPanel->lower();    
-  visPanel->lower();    
+  videoPanel->hide();    
+  dvdPanel->hide();    
+  visPanel->hide();    
 }
 
 void MediaPlayer::showAsDVD() 
@@ -178,9 +178,9 @@ void MediaPlayer::showAsDVD()
     play();
   }
   display();
-  visPanel->lower();
-  videoPanel->lower();    
-  dvdPanel->lower();    
+  visPanel->hide();
+  videoPanel->hide();    
+  dvdPanel->hide();    
 }
 
 void MediaPlayer::showAsVideo() 
@@ -188,8 +188,8 @@ void MediaPlayer::showAsVideo()
   activePanel = videoPanel;
   panel_on = false;
   display();
-  dvdPanel->lower();
-  visPanel->lower();
+  dvdPanel->hide();
+  visPanel->hide();
   appState->function = ApplicationState::NONE;
   videoPanel->display();    
 }
@@ -250,7 +250,7 @@ void MediaPlayer::mouseMoveEvent ( QMouseEvent * e )
 void MediaPlayer::mouseReleaseEvent ( QMouseEvent * e )
 {
   if (panel_on) {
-    activePanel->lower();
+    activePanel->hide();
     panel_on = false;
     return;
   }
@@ -264,7 +264,7 @@ void MediaPlayer::mouseReleaseEvent ( QMouseEvent * e )
 void MediaPlayer::keyPressEvent ( QKeyEvent * e )
 {
   if (e->key() == Qt::Key_Escape) {
-    lower();
+    hide();
     // menu->show();
   }
 }

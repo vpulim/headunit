@@ -241,16 +241,27 @@ void MediaPlayer::showAsVis()
   activePanel = visPanel;
   panel_on = false;
   display();
-  dvdPanel->lower();
-  videoPanel->lower();
-  visPanel->lower();    
+  dvdPanel->hide();
+  videoPanel->hide();
+  visPanel->hide();    
 }
 
 void MediaPlayer::showAsDVD() 
 {
   activePanel = dvdPanel;
   panel_on = false;
-  closeItem();
+  if (!isDVD() && isOpened())
+    closeItem();
+  dvdPanel->hide();
+  videoPanel->hide();
+  visPanel->hide();    
+
+  if (isDVD() && isPlaying()) {
+    display();
+    return;
+  }
+
+  appState->function = ApplicationState::DVD;
 
   if (FAILED(CoCreateInstance(CLSID_DvdGraphBuilder, NULL, 
 			      CLSCTX_INPROC_SERVER, IID_IDvdGraphBuilder,
@@ -302,20 +313,29 @@ void MediaPlayer::showAsDVD()
   MediaItem dvd(-1,QString("dvd://"), QString(""),QString(""),QString("DVD"),QString(""));
   openedItem = dvd;
   play();
+  if (appState->dvdPos >= 0) {
+    DWORD dwFlags = DVD_CMD_FLAG_Block | DVD_CMD_FLAG_Flush;
+    DVD_HMSF_TIMECODE timeCode;
+    long pos = appState->dvdPos / 1000;
+    timeCode.bHours = pos / 3600;
+    pos = pos % 3600;
+    timeCode.bMinutes = pos / 60;
+    timeCode.bSeconds = pos % 60;
+    timeCode.bFrames = 0;
+    dvdControl->PlayAtTimeInTitle(appState->dvdTitle,&timeCode,dwFlags,NULL);
+  }
   display();
-  dvdPanel->lower();
-  videoPanel->lower();
-  visPanel->lower();    
 }
 
 void MediaPlayer::showAsVideo() 
 {
   activePanel = videoPanel;
-  display();
-  videoPanel->lower();    
-  visPanel->lower();    
-  dvdPanel->lower();    
   panel_on = false;
+  display();
+  visPanel->hide();    
+  dvdPanel->hide();    
+  appState->function = ApplicationState::NONE;
+  videoPanel->display();    
 }
 
 void MediaPlayer::dvdPause() 
@@ -386,14 +406,10 @@ void MediaPlayer::dvdGetLocation(int *title, int *chapter,
 
 void MediaPlayer::moveEvent ( QMoveEvent *e ) 
 {
-  xpos = e->pos().x();
-  ypos = e->pos().y();
 }
 
 void MediaPlayer::resizeEvent ( QResizeEvent *e ) 
 {
-//  xw = e->size().width();
-//  xh = e->size().height();
   visPanel->move(0,e->size().height() - visPanel->size().height());
   dvdPanel->move(0,e->size().height() - dvdPanel->size().height());
   videoPanel->move(0,e->size().height() - videoPanel->size().height());
@@ -412,7 +428,7 @@ void MediaPlayer::mouseReleaseEvent ( QMouseEvent * e )
 {
   bool old_state = panel_on;
   if (panel_on) {
-    activePanel->lower();
+    activePanel->hide();
     panel_on = false;
   }
   if (dvdControl) {
@@ -429,7 +445,7 @@ void MediaPlayer::mouseReleaseEvent ( QMouseEvent * e )
 void MediaPlayer::keyPressEvent ( QKeyEvent * e )
 {
   if (e->key() == Qt::Key_Escape) {
-    lower();
+    hide();
     // menu->show();
   }
 }

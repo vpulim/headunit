@@ -22,3 +22,10 @@ void FunctionScreen::display()
   raise();
   show();
 }
+
+void FunctionScreen::hide()
+{
+  lower();
+  QFrame::hide();
+}
+
