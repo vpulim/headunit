@@ -37,13 +37,14 @@ SOURCES += AudioBrowserScreen.cpp \
            VisPanel.cpp
 
 win32 {
-        CONFIG  += console
-	SOURCES += DirectShowMediaPlayer.cpp
-        INCLUDEPATH += d:/DX90SDK/Include
-        LIBPATH += d:/DX90SDK/Lib
-        LIBS += strmiids.lib
+  CONFIG  += console
+  SOURCES += DirectShowMediaPlayer.cpp
+  INCLUDEPATH += d:/DX90SDK/Include
+  LIBPATH += d:/DX90SDK/Lib
+  LIBS += strmiids.lib
 }
 
 unix {
-	SOURCES += XineMediaPlayer.cpp
+  SOURCES += XineMediaPlayer.cpp
+  LIBS += `xine-config --libs`
 }

@@ -1,3 +1,4 @@
+#include <qdir.h>
 #include <qfile.h>
 #include <qimage.h>
 #include <qsettings.h>
@@ -5,6 +6,20 @@
 #include "Button.h"
 #include "SelectionList.h"
 #include "Skin.h"
+
+QString fixFileCase(QString path, QString file) {
+  QDir dir(path);
+  dir.setMatchAllDirs(true);
+
+  QStringList entries = dir.entryList();
+  QStringList::ConstIterator it = entries.constBegin();
+  while (it != entries.constEnd()) {
+    if ((*it).lower() == file.lower())
+      return QString(*it);
+    ++it;
+  }
+  return file;
+}
 
 Skin::Skin(const QString &skinFileName)
 {
@@ -14,7 +29,7 @@ Skin::Skin(const QString &skinFileName)
   // load skin file for the specified type
   QString skin(name);
   skin.append(QChar('/'));
-  skin.append(skinFileName);
+  skin.append(fixFileCase(name, skinFileName));
   QFile skinFile(skin);
   if (!skinFile.open( IO_ReadOnly )) {
     qWarning("couldn't load skin file: %s", skin.latin1());
@@ -34,16 +49,16 @@ Skin::Skin(const QString &skinFileName)
   
   QString empty(name);
   empty.append(QChar('/'));
-  empty.append(files.section(',',0,0));
+  empty.append(fixFileCase(name, files.section(',',0,0)));
   QString off(name);
   off.append(QChar('/'));
-  off.append(files.section(',',1,1));
+  off.append(fixFileCase(name, files.section(',',1,1)));
   QString on(name);
   on.append(QChar('/'));
-  on.append(files.section(',',2,2));
+  on.append(fixFileCase(name, files.section(',',2,2)));
   QString down(name);
   down.append(QChar('/'));
-  down.append(files.section(',',3,3));
+  down.append(fixFileCase(name, files.section(',',3,3)));
 
   // load image files
   emptyImage = new QImage(empty);

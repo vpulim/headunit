@@ -60,6 +60,18 @@ static void event_listener(void *user_data, const xine_event_t *event) {
   */
 }
 
+void redirectOutput(QWidget *w)
+{
+  xine_port_send_gui_data(vo_port, XINE_GUI_SEND_DRAWABLE_CHANGED, 
+			  (void*)(w->winId()));
+}
+
+void restoreOutput(QWidget *w)
+{
+  xine_port_send_gui_data(vo_port, XINE_GUI_SEND_DRAWABLE_CHANGED, 
+			  (void*)(w->winId()));
+}
+
 MediaPlayer::MediaPlayer() : FunctionScreen("MediaPlayer")
 {
   setPaletteBackgroundColor(QColor(0,0,0));
@@ -103,7 +115,7 @@ MediaPlayer::MediaPlayer() : FunctionScreen("MediaPlayer")
   volumeUp();
   mute = false;
 
-  openedMRL = QString::null;
+  openedItem = MediaItem::null;
   playing = false;
   panel_on = false;
   
@@ -113,18 +125,6 @@ MediaPlayer::MediaPlayer() : FunctionScreen("MediaPlayer")
 void MediaPlayer::init() 
 {
   connect( qApp, SIGNAL(aboutToQuit()), this, SLOT(cleanup()) );
-}
-
-void MediaPlayer::redirectOutput(QWidget *w)
-{
-  xine_port_send_gui_data(vo_port, XINE_GUI_SEND_DRAWABLE_CHANGED, 
-			  (void*)(w->winId()));
-}
-
-void MediaPlayer::restoreOutput()
-{
-  xine_port_send_gui_data(vo_port, XINE_GUI_SEND_DRAWABLE_CHANGED, 
-			  (void*)(winId()));
 }
 
 void MediaPlayer::cleanup() 
@@ -138,52 +138,10 @@ void MediaPlayer::cleanup()
   xine_exit(xine);
 }
 
-void MediaPlayer::endStream()
-{
-  playing = false;
-}
-
-const char *MediaPlayer::getArtist()
-{
-  if (openedMRL.isNull()) return NULL;
-  return xine_get_meta_info(stream, XINE_META_INFO_ARTIST);  
-}
-
-const char *MediaPlayer::getAlbum()
-{
-  if (openedMRL.isNull()) return NULL;
-  return xine_get_meta_info(stream, XINE_META_INFO_ALBUM);  
-}
-
-const char *MediaPlayer::getTitle()
-{
-  if (openedMRL.isNull()) return NULL;
-  const char *title = xine_get_meta_info(stream, XINE_META_INFO_TITLE);  
-  if (title)
-    return title;
-
-  if (openedMRL.startsWith("file://")) {
-    QFileInfo fi(openedMRL.mid(7));
-    strcpy(buf, fi.fileName().latin1());
-    return buf;;
-  }
-  else if (openedMRL.startsWith("dvd://")) {
-    return "DVD";
-  }
-  else
-    return "Unknown";  
-}
-
-const char *MediaPlayer::getGenre()
-{
-  if (openedMRL.isNull()) return NULL;
-  return xine_get_meta_info(stream, XINE_META_INFO_GENRE);  
-}
-
 bool MediaPlayer::getPosition(int *pos, int *len)
 {
   int pos_stream;
-  if (openedMRL.isNull()) {
+  if (openedItem.isNull()) {
     *pos = 0;
     *len = 0;
     return false;
@@ -191,9 +149,10 @@ bool MediaPlayer::getPosition(int *pos, int *len)
   return xine_get_pos_length (stream, &pos_stream, pos, len) == 1;
 }
 
-void MediaPlayer::open(const QString &mrl) 
+void MediaPlayer::open(const MediaItem &mi) 
 {
   close();
+  QString mrl = mi.mrl();
   if (!xine_open(stream, mrl.latin1())) {
     qWarning("Unable to open location: %s", mrl.latin1());
     return;
@@ -212,21 +171,21 @@ void MediaPlayer::open(const QString &mrl)
       xine_open(stream, mrl.latin1()); 
     }
   }
-  openedMRL = mrl;
+  openedItem = mi;
   playing = false;
 }
 
 void MediaPlayer::close() 
 {
-  if (!openedMRL.isNull())
+  if (!openedItem.isNull())
     xine_close(stream);
-  openedMRL = QString::null;
+  openedItem = MediaItem::null;
   playing = false;
 }
 
 void MediaPlayer::play() 
 {
-  if (openedMRL.isNull() || playing)
+  if (openedItem.isNull() || playing)
     return;
    if (!xine_play(stream, 0, 0)) {
     qWarning("Unable to play");
@@ -238,7 +197,7 @@ void MediaPlayer::play()
 void MediaPlayer::stop() 
 {
   playing = false;
-  if (openedMRL.isNull())
+  if (openedItem.isNull())
     return;
   xine_stop(stream);
 }
@@ -289,7 +248,8 @@ void MediaPlayer::showAsDVD()
   activePanel = dvdPanel;
   if (panel_on) activePanel->show();    
   close();
-  open("dvd://");
+  MediaItem dvd("dvd://","","","","");
+  open(dvd);
   play();
   show();
 }

@@ -13,12 +13,12 @@ MenuScreen *menu;
 AudioPlayerScreen *audioPlayer;
 AudioBrowserScreen *audioBrowser;
 MediaPlayer *mediaPlayer;
-QSettings *settings;
 QSqlDatabase *db;
+
+QSettings settings;
 
 #define CREATE_MUSIC_TABLE "create table music (id integer primary key, artist text, album text, title text, genre text, mrl text)"
 #define INSERT_MUSIC_ITEM "insert into music (artist, album, title, genre, mrl) values"
-
 
 void initializeDB(QSqlDatabase *db, QString path) 
 {
@@ -56,8 +56,7 @@ int main( int argc, char **argv )
   QApplication a( argc, argv );
   a.addLibraryPath("plugins");
 
-  settings = new QSettings();
-  settings->setPath( "mp3car", "headunit" );
+  settings.setPath( "mp3car", "headunit" );
 
   QString dbName("headunit.db");
   if (dbName.isNull()) {
@@ -76,21 +75,22 @@ int main( int argc, char **argv )
   audioPlayer = new AudioPlayerScreen();
   audioBrowser = new AudioBrowserScreen();
   mediaPlayer = new MediaPlayer();
-
-  if (settings->readEntry("headunit/mediapath") == QString::null) {
-	  QString mediaPath = 
-		  QFileDialog::getExistingDirectory(QString::null,
-											0,
-											"get media path",
-											"Choose location of media files:",
-											TRUE);
-	  settings->writeEntry("headunit/mediapath", mediaPath);
+  
+  if (settings.readEntry("headunit/mediapath") == QString::null) {
+    QString mediaPath = 
+      QFileDialog::getExistingDirectory(QString::null,0,
+					"get media path",
+					"Choose location of media files:",
+					TRUE);
+    qWarning("writing setting: %s", mediaPath.latin1());
+    QString e = mediaPath;
+    settings.writeEntry(QString("headunit/mediapath"), e);
   }
-
+  
   if (db->tables().empty()) {
     qWarning("Initializing database: %s", dbName.latin1());
     db->exec( CREATE_MUSIC_TABLE );
-    initializeDB(db, settings->readEntry("headunit/mediapath", "./"));
+    initializeDB(db, settings.readEntry("headunit/mediapath", "./"));
   }
 
   menu->init();
@@ -98,8 +98,10 @@ int main( int argc, char **argv )
   audioBrowser->init();
   mediaPlayer->init();
 
-  if (menu->isNull() || audioPlayer->isNull() || 
-      audioBrowser->isNull() || mediaPlayer->isNull())
+  if (menu->isNull() || 
+      audioPlayer->isNull() || 
+      audioBrowser->isNull() || 
+      mediaPlayer->isNull())
     return 1;
   
   menu->show();
