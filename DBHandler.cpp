@@ -7,6 +7,7 @@
 #include "DBHandler.h"
 #include "ApplicationState.h"
 #include "MediaList.h"
+#include "Tag.h"
 
 void DBHandler::loadAppState() 
 {
@@ -45,23 +46,27 @@ void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, 
 	  return;
 
   QFileInfo info(musicPath);
+  Tag tag;
   if (!info.isDir()) {
-	  QString mrl("file://" + info.absFilePath());
+    tag.link(info.absFilePath());
+    QString title = tag.getTitle();
+    if (title == "Unknown") {
+      title = info.fileName();
+    }
 
-	  QSqlQuery query;
-	  query.prepare(INSERT_MUSIC_ITEM);
+    QSqlQuery query;
+    query.prepare(INSERT_MUSIC_ITEM);
     query.bindValue(":key", info.dirPath(TRUE));
-	  query.bindValue(":artist", "Unknown");
-	  query.bindValue(":album", "Unknown");
-	  query.bindValue(":title", info.fileName());
-	  query.bindValue(":genre", "Unknown");
-	  query.bindValue(":mrl", mrl);
-
-  //		qWarning(mrl);
-	  query.exec();
-	  numFiles++;
-	  emit dbStatus(numFiles,musicPath);
-	  return;
+    query.bindValue(":artist", tag.getArtist());
+    query.bindValue(":album", tag.getAlbum());
+    query.bindValue(":title", title);
+    query.bindValue(":genre", tag.getGenre());
+    query.bindValue(":mrl", "file://" + info.absFilePath());
+    
+    query.exec();
+    numFiles++;
+    emit dbStatus(numFiles,title);
+    return;
   }
       
   if (extensions.isNull()) {

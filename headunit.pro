@@ -21,7 +21,8 @@ HEADERS	+= AudioBrowserScreen.h \
 	VisPanel.h \
 	DBHandler.h \
         MediaList.h \
-        ApplicationState.h
+        ApplicationState.h \
+        Tag.h
 
 SOURCES	+= AudioBrowserScreen.cpp \
 	AudioPlayerScreen.cpp \
@@ -37,7 +38,8 @@ SOURCES	+= AudioBrowserScreen.cpp \
 	Skin.cpp \
 	VideoPanel.cpp \
 	VisPanel.cpp \
-	DBHandler.cpp 
+	DBHandler.cpp \
+        Tag.cpp
 
 FORMS	= ConfigDialog.ui
 
@@ -51,5 +53,5 @@ win32 {
 
 unix {
   SOURCES += XineMediaPlayer.cpp
-  LIBS += `xine-config --libs`
+  LIBS += `xine-config --libs` -lid3
 }
