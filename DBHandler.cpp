@@ -5,6 +5,8 @@
 #include <qbuffer.h>
 #include <qpixmap.h>
 #include <qwmatrix.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "HeadUnit.h"
 #include "ConfigDialog.h"
 #include "DBHandler.h"
@@ -14,6 +16,7 @@
 
 int sqlite_encode_binary(const unsigned char *in, int n, unsigned char *out);
 int sqlite_decode_binary(const unsigned char *in, unsigned char *out);
+void dumpString(char *ba, int len, char *fileName);
 
 DBHandler::DBHandler() : valid(false)
 {
@@ -74,15 +77,16 @@ void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, 
   Tag tag;
   if (!info.isDir()) {
     tag.link(info.absFilePath());
+    QString artist = tag.getArtist();
     QString title = tag.getTitle();
     if (title == "Unknown") {
       title = info.fileName();
     }
-
+    
     QSqlQuery query;
     query.prepare(INSERT_MUSIC_ITEM);
     query.bindValue(":key", info.dirPath(TRUE));
-    query.bindValue(":artist", tag.getArtist());
+    query.bindValue(":artist", artist);
     query.bindValue(":album", tag.getAlbum());
     query.bindValue(":title", title);
     query.bindValue(":genre", tag.getGenre());
@@ -90,7 +94,7 @@ void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, 
     
     query.exec();
     numFiles++;
-    emit dbStatus(numFiles,title);
+    emit dbStatus(numFiles, artist + " - " + title);
     return;
   }
       
@@ -222,9 +226,11 @@ QPixmap DBHandler::loadAlbumArt(const QString& key)
     if (q.next()) {
       QString blob = q.value(0).toString();
       dataBuffer.resize(blob.length(), QGArray::SpeedOptim);
+//      dumpString((char*)blob.latin1(), blob.length(), "loaded.dat");
       int decodedSize = sqlite_decode_binary((uchar *)blob.latin1(),
 					     (uchar *)dataBuffer.data());
       dataBuffer.truncate(decodedSize);
+//      qWarning("loaded: size=%u",dataBuffer.size());
       image.loadFromData(dataBuffer);
       if (image.isNull())
 	qWarning("error loading album art for %s", key.latin1());      
@@ -244,16 +250,28 @@ void DBHandler::saveAlbumArt(QString& key, QPixmap& image)
   m.scale(scalew,scaleh);
   QPixmap scaled = image.xForm(m);
   scaled.save( &buffer, "JPEG" );
+//  qWarning("saved: size=%u",ba.size());
   int size = ba.size();
   dataBuffer.resize((uint)(size*1.2), QGArray::SpeedOptim);
   uint encodedSize = sqlite_encode_binary((uchar *)ba.data(), ba.size(), 
 					  (uchar *)dataBuffer.data());
   dataBuffer.truncate(encodedSize);
+//  dumpString(dataBuffer.data(), dataBuffer.size(), "saved.dat");
   QSqlQuery q;
   q.prepare(INSERT_ALBUMART);
   q.bindValue(":key", key);
   q.bindValue(":image", QString(dataBuffer));
   q.exec();  
+}
+
+void dumpString(char *ba, int len, char *fileName) {
+  FILE *fp;
+  fp = fopen(fileName, "w");
+  for (int i=0; i<len; i++) {
+    QString num = QString::number((unsigned char)ba[i]);
+    fprintf(fp, "%s\n",num.latin1());
+  }
+  fclose(fp);
 }
 
 // The following functions were copied out of the encode.c file in the sqlite
@@ -294,10 +312,13 @@ int sqlite_encode_binary(const unsigned char *in, int n, unsigned char *out){
       out[j++] = 1;
       x++;
     }
+    if (x >= 128 && x <= 159) {
+      out[j++] = 1;
+      x -= 32;
+    }
     out[j++] = x;
   }
   out[j] = 0;
-  assert( j==n+m+1 );
   return j;
 }
 
@@ -314,11 +335,16 @@ int sqlite_encode_binary(const unsigned char *in, int n, unsigned char *out){
 int sqlite_decode_binary(const unsigned char *in, unsigned char *out){
   int i, e;
   unsigned char c;
+  unsigned char d;
   e = *(in++);
   i = 0;
   while( (c = *(in++))!=0 ){
     if( c==1 ){
-      c = *(in++) - 1;
+      d = *(in++);
+      if (d >= 96 && d <= 127)
+        c = d + 32;
+      else
+        c = d - 1;
     }
     out[i++] = c + e;
   }
