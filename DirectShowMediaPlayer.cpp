@@ -47,7 +47,7 @@ MediaPlayer::MediaPlayer() : FunctionScreen("MediaPlayer")
   mute = false;
 
   openedItem = MediaItem::null;
-  playing = false;
+  playState = STOPPED;
   panel_on = false;
 
   valid = true;
@@ -122,7 +122,6 @@ void MediaPlayer::close()
 {
   stop();
   openedItem = MediaItem::null;
-  playing = false;
   if (videoWindow) {
     videoWindow->put_Visible(OAFALSE);
     videoWindow->put_Owner(NULL);
@@ -137,15 +136,23 @@ void MediaPlayer::close()
 
 void MediaPlayer::play() 
 {
-  if (openedItem.isNull() || playing)
+  if (openedItem.isNull() || playState == PLAYING)
     return;
   mediaControl->Run();
-  playing = true;
+  playState = PLAYING;
+}
+
+void MediaPlayer::pause() 
+{
+  if (openedItem.isNull() || playState != PLAYING)
+    return;
+  mediaControl->Pause();
+  playState = PAUSED;
 }
 
 void MediaPlayer::stop() 
 {
-  playing = false;
+  playState = STOPPED;
   if (openedItem.isNull())
     return;
   mediaControl->Stop();

@@ -58,10 +58,11 @@ void AudioPlayerScreen::init() {
   connect(buttons[UP], SIGNAL(clicked()), listView, SLOT(scrollUp()));
   connect(buttons[PGDOWN], SIGNAL(clicked()), listView,SLOT(scrollPageDown()));
   connect(buttons[PGUP], SIGNAL(clicked()), listView, SLOT(scrollPageUp()));
-  connect(buttons[PLAY], SIGNAL(clicked()), this, SLOT(play()) );
+  connect(buttons[PLAY], SIGNAL(clicked()), this, SLOT(playpause()) );
   connect(buttons[STOP], SIGNAL(clicked()), this, SLOT(stop()) );
   connect(buttons[PREV], SIGNAL(clicked()), this, SLOT(previous()) );
   connect(buttons[NEXT], SIGNAL(clicked()), this, SLOT(next()) );
+  connect(listView, SIGNAL(selected(int)), this, SLOT(play()) );
   connect(buttons[VOLUP], SIGNAL(clicked()), mediaPlayer, SLOT(volumeUp()) );
   connect(buttons[VOLDN], SIGNAL(clicked()), mediaPlayer, SLOT(volumeDown()) );
   connect(buttons[MUTE], SIGNAL(clicked()), mediaPlayer, SLOT(volumeMute()) );
@@ -73,7 +74,6 @@ void AudioPlayerScreen::init() {
 
   loadFolder(appState->folderPath, appState->folderPlus, appState->folderIndex);
   play();
-//  listView->setCurrentItem(appState->folderIndex);
 }
 
 void AudioPlayerScreen::play()
@@ -90,30 +90,42 @@ void AudioPlayerScreen::play()
   appState->folderIndex = index;
 }
 
+void AudioPlayerScreen::playpause()
+{
+  if (appState->folderIndex == listView->currentItem()) {
+    if (mediaPlayer->isPlaying())
+      mediaPlayer->pause();
+    else if (mediaPlayer->isPaused())
+      mediaPlayer->play();
+    else
+      play();
+  }
+  else
+    play();
+}
+
 void AudioPlayerScreen::stop()
 {  
-  if (mediaPlayer->isPlaying())
-    mediaPlayer->stop();
+  mediaPlayer->stop();
 }
 
 void AudioPlayerScreen::previous()
 {
+  listView->setCurrentItem(appState->folderIndex);
   listView->scrollUp();
-  if (mediaPlayer->isPlaying()) {
-    stop();
+  if (!mediaPlayer->isStopped())
     play();
-  }
 }
 
 void AudioPlayerScreen::next()
 {
+  listView->setCurrentItem(appState->folderIndex);
+
   if (!listView->scrollDown())
     return;
   
-  if (mediaPlayer->isPlaying()) {
-    stop();
+  if (!mediaPlayer->isStopped())
     play();
-  }
 }
 
 void AudioPlayerScreen::endOfStreamReached()
@@ -156,7 +168,12 @@ void AudioPlayerScreen::updateInfo()
   labels[TRACKTIME]->setText(zero.addMSecs(len).toString("mm:ss"));
   labels[TIME]->setText(QTime::currentTime().toString("hh:mm:ss"));
   labels[DATE]->setText(QDate::currentDate().toString("d/M/yyyy"));
-  labels[STATUS]->setText(mediaPlayer->isPlaying()?"PLAY":"STOP");
+  if (mediaPlayer->isPlaying())
+    labels[STATUS]->setText("PLAY");
+  else if (mediaPlayer->isPaused())
+    labels[STATUS]->setText("PAUSE");
+  else if (mediaPlayer->isStopped())
+    labels[STATUS]->setText("STOP");
   labels[VOLUME]->setText(QString::number(mediaPlayer->getVolume()) + "%");
   if (mediaPlayer->isPlaying() && pos == len)
     endOfStreamReached();

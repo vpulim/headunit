@@ -21,6 +21,7 @@ class AudioPlayerScreen : public FunctionScreen
 
  private slots:
   void play();
+  void playpause();
   void stop();
   void previous();
   void next();

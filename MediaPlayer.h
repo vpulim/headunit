@@ -13,7 +13,9 @@ class MediaPlayer : public FunctionScreen
   MediaPlayer();
   void init();
   bool isOpened() { return !openedItem.isNull(); };
-  bool isPlaying() { return playing; };
+  bool isPlaying() { return playState == PLAYING; };
+  bool isPaused() { return playState == PAUSED; };
+  bool isStopped() { return playState == STOPPED; };
   MediaItem &getOpened() { return openedItem; };
   bool getPosition(int *pos, int *len);
   int getVolume() { return volume; };
@@ -22,6 +24,7 @@ class MediaPlayer : public FunctionScreen
   void open(const MediaItem &m);
   void close();
   void play();
+  void pause();
   void stop();
   void volumeUp();
   void volumeDown();
@@ -40,9 +43,11 @@ class MediaPlayer : public FunctionScreen
   void cleanup();
 
  private:
+  enum {PLAYING, PAUSED, STOPPED};
+
   bool panel_on;
   MediaItem openedItem;
-  bool playing;
+  int playState;
   FunctionScreen *visPanel;
   FunctionScreen *videoPanel;
   FunctionScreen *dvdPanel;

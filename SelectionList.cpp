@@ -6,7 +6,7 @@ SelectionList::SelectionList( QWidget *parent, const char *name )
   setVScrollBarMode(AlwaysOff);
   setHScrollBarMode(AlwaysOff);
   setFont(QFont());
-//  setStaticBackground(true);
+  setStaticBackground(true);
 }
 
 bool SelectionList::scrollUp()
