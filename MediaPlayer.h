@@ -17,8 +17,10 @@ class MediaPlayer : public FunctionScreen
   bool isPaused() { return playState == PAUSED; };
   bool isStopped() { return playState == STOPPED; };
   MediaItem &getOpened() { return openedItem; };
-  bool getPosition(int *pos, int *len);
+  bool getPosition(long *pos, long *len);
+  bool setPosition(long pos);
   int getVolume() { return volume; };
+  void setVolume(int volume);
 
  public slots:
   void open(const MediaItem &m);
@@ -53,7 +55,7 @@ class MediaPlayer : public FunctionScreen
   FunctionScreen *dvdPanel;
   FunctionScreen *activePanel;
   int volume;
-  bool mute;
+  int mute;
   char buf[256];
 };
 

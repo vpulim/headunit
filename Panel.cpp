@@ -48,7 +48,7 @@ void Panel::loadSkin()
 
 void Panel::updateInfo()
 {
-  int pos = 0, len = 0;
+  long pos = 0, len = 0;
   if (mediaPlayer->isOpened()) {
     mediaPlayer->getPosition(&pos,&len);
   }

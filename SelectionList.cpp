@@ -11,9 +11,9 @@ SelectionList::SelectionList( QWidget *parent, const char *name )
 
 bool SelectionList::scrollUp()
 {
-  if (count() == 0)
+  if (count() == 0 || currentItem() == 0)
     return false;
-  if (currentItem() <= 0)
+  if (currentItem() < 0)
     setCurrentItem(0);
   else
     setCurrentItem(currentItem() - 1);
@@ -23,7 +23,7 @@ bool SelectionList::scrollUp()
 bool SelectionList::scrollDown()
 {
   if (count() == 0 || currentItem() + 1 >= count())
-	return false;
+  	return false;
   setCurrentItem(currentItem() + 1);
   return true;
 }

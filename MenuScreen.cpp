@@ -37,12 +37,12 @@ MenuScreen::MenuScreen() : FunctionScreen("Menu")
 }
 
 void MenuScreen::init() {
-  connect( buttons[AUDIO], SIGNAL(clicked()), audioPlayer, SLOT(show()) );
-  connect( buttons[AUDIO], SIGNAL(clicked()), this, SLOT(hide()) );
+  connect( buttons[AUDIO], SIGNAL(clicked()), audioPlayer, SLOT(display()) );
+//  connect( buttons[AUDIO], SIGNAL(clicked()), this, SLOT(hide()) );
   connect( buttons[VIDEO], SIGNAL(clicked()), mediaPlayer, SLOT(showAsVideo()) );
-  connect( buttons[VIDEO], SIGNAL(clicked()), this, SLOT(hide()) );
+//  connect( buttons[VIDEO], SIGNAL(clicked()), this, SLOT(hide()) );
   connect( buttons[DVD], SIGNAL(clicked()), mediaPlayer, SLOT(showAsDVD()) );
-  connect( buttons[DVD], SIGNAL(clicked()), this, SLOT(hide()) );
+//  connect( buttons[DVD], SIGNAL(clicked()), this, SLOT(hide()) );
   connect( buttons[VOLUP], SIGNAL(clicked()), mediaPlayer, SLOT(volumeUp()) );
   connect( buttons[VOLDN], SIGNAL(clicked()), mediaPlayer, SLOT(volumeDown()) );
   connect( buttons[MUTE], SIGNAL(clicked()), mediaPlayer, SLOT(volumeMute()) );

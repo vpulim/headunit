@@ -11,3 +11,9 @@ FunctionScreen::FunctionScreen(const char *name, QWidget *parent)
   move(0,0);
   valid = false;
 }
+
+void FunctionScreen::display()
+{
+  raise();
+  show();
+}

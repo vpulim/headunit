@@ -127,7 +127,7 @@ Button *Skin::getButton(const char *c, QWidget &parent)
     ++it;
   }
   if (values.empty()) {
-    qWarning("skin item %s is not defined!",code.latin1());
+    qWarning("skin item %s (button) is not defined!",code.latin1());
     return new Button(&parent, code);
   }
   Button *b = new Button(&parent, values[5]);
@@ -156,7 +156,7 @@ QLabel *Skin::getLabel(const char *c, QWidget &parent)
     ++it;
   }
   if (values.empty()) {
-    qWarning("skin item %s is not defined!",code.latin1());
+    qWarning("skin item %s (label) is not defined!",code.latin1());
     return new QLabel(&parent, code);
   }
   QLabel *l = new QLabel(&parent, values[10]);
@@ -194,7 +194,7 @@ SelectionList *Skin::getSelectionList(const char *key, QWidget &parent)
     ++it;
   }
   if (values.empty()) {
-    qWarning("skin item %s is not defined!",key);
+    qWarning("skin item %s (selection list)is not defined!",key);
     return new SelectionList(&parent, key);
   }
   SelectionList *sl = new SelectionList(&parent, values[5].latin1());
@@ -232,4 +232,32 @@ SelectionList *Skin::getSelectionList(const char *key, QWidget &parent)
   sl->setPalette(p);
 
   return sl;
+}
+
+QLabel *Skin::getIndicator(const char *c, QWidget &parent)
+{
+  QString code(c);
+  code.prepend('"').append('"');
+  SkinItemList::const_iterator it = items.constBegin();
+  QStringList values;
+  while ( it != items.constEnd()) {
+    if ((*it).count() > 5 && (*it)[5] == code && (*it)[0][0] == 'I')
+	  values = *it;
+    ++it;
+  }
+  if (values.empty()) {
+    qWarning("skin item %s (indicator) is not defined!",code.latin1());
+    return new QLabel(&parent);
+  }
+  QLabel *l = new QLabel(&parent, values[5]);
+  int x = values[1].toInt();
+  int y = values[2].toInt();
+  int w = values[3].toInt();
+  int h = values[4].toInt();
+  l->move( x, y);
+  l->resize( w, h);
+  l->setPixmap(QPixmap(onImage->copy(x, y, w, h)));
+  l->setFrameShape(QFrame::NoFrame);
+  l->setFrameShadow(QFrame::Plain);
+  return l;
 }

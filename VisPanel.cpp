@@ -10,7 +10,6 @@ VisPanel::VisPanel(QWidget *parent)
   connect( buttons[STOP], SIGNAL(clicked()), audioPlayer, SLOT(stop()) );
   connect( buttons[PREV], SIGNAL(clicked()), audioPlayer, SLOT(previous()) );
   connect( buttons[NEXT], SIGNAL(clicked()), audioPlayer, SLOT(next()) );
-  connect( buttons[EXIT], SIGNAL(clicked()), audioPlayer, SLOT(show()) );
-  connect( buttons[EXIT], SIGNAL(clicked()), parent, SLOT(hide()) );
+  connect( buttons[EXIT], SIGNAL(clicked()), parent, SLOT(lower()) );
 }
 

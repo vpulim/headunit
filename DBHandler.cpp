@@ -13,6 +13,8 @@ void DBHandler::loadAppState()
   appState->folderPath = loadStateValue( "folderPath" );
   appState->folderPlus = loadStateValue( "folderPlus" , "0").toInt();
   appState->folderIndex = loadStateValue( "folderIndex" , "0").toInt();
+  appState->playMode = loadStateValue( "playMode", "0").toInt();
+  appState->volume = loadStateValue( "volume", "50").toInt();
 }
 
 void DBHandler::saveAppState() 
@@ -23,6 +25,8 @@ void DBHandler::saveAppState()
   saveStateValue( "folderPath", appState->folderPath );
   saveStateValue( "folderPlus", QString::number(appState->folderPlus ? 1 : 0) );
   saveStateValue( "folderIndex", QString::number(appState->folderIndex) );
+  saveStateValue( "playMode", QString::number(appState->playMode) );
+  saveStateValue( "volume", QString::number(appState->volume) );
 }
 
 void DBHandler::populateDB(const QString& musicPath, const QString& videoPath, const QString& extensions) 
@@ -42,22 +46,22 @@ void DBHandler::subPopulate(const QString& musicPath, const QString& videoPath, 
 
   QFileInfo info(musicPath);
   if (!info.isDir()) {
-	QString mrl("file://" + info.absFilePath());
+	  QString mrl("file://" + info.absFilePath());
 
-	QSqlQuery query;
-	query.prepare(INSERT_MUSIC_ITEM);
-  query.bindValue(":key", info.dirPath(TRUE));
-	query.bindValue(":artist", "Unknown");
-	query.bindValue(":album", "Unknown");
-	query.bindValue(":title", info.fileName());
-	query.bindValue(":genre", "Unknown");
-	query.bindValue(":mrl", mrl);
+	  QSqlQuery query;
+	  query.prepare(INSERT_MUSIC_ITEM);
+    query.bindValue(":key", info.dirPath(TRUE));
+	  query.bindValue(":artist", "Unknown");
+	  query.bindValue(":album", "Unknown");
+	  query.bindValue(":title", info.fileName());
+	  query.bindValue(":genre", "Unknown");
+	  query.bindValue(":mrl", mrl);
 
-//		qWarning(mrl);
-	query.exec();
-	numFiles++;
-	emit dbStatus(numFiles,musicPath);
-	return;
+  //		qWarning(mrl);
+	  query.exec();
+	  numFiles++;
+	  emit dbStatus(numFiles,musicPath);
+	  return;
   }
       
   if (extensions.isNull()) {

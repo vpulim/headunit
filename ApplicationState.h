@@ -7,6 +7,8 @@ class ApplicationState
     QString folderPath;
     bool folderPlus;
     int folderIndex;
+    int playMode;
+    int volume;
 };
 
 #endif

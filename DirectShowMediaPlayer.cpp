@@ -11,6 +11,7 @@
 #include "MediaPlayer.h"
 #include "MenuScreen.h"
 #include "MediaItem.h"
+#include "ApplicationState.h"
 
 IGraphBuilder*	graphBuilder;
 IMediaControl*	mediaControl;
@@ -42,9 +43,8 @@ MediaPlayer::MediaPlayer() : FunctionScreen("MediaPlayer")
   if (dvdPanel->isNull()) return;
   activePanel = videoPanel;
 
-  volume = 100;
-  volumeUp();
-  mute = false;
+  setVolume(appState->volume);
+  mute = 0;
 
   openedItem = MediaItem::null;
   playState = STOPPED;
@@ -63,7 +63,7 @@ void MediaPlayer::cleanup()
   close();
 }
 
-bool MediaPlayer::getPosition(int *pos, int *len)
+bool MediaPlayer::getPosition(long *pos, long *len)
 {
   if (openedItem.isNull() || !mediaSeek) {
     *pos = 0;
@@ -72,10 +72,20 @@ bool MediaPlayer::getPosition(int *pos, int *len)
   }
   LONGLONG llpos;
   LONGLONG lllen;
-  mediaSeek->GetCurrentPosition(&llpos);
-  mediaSeek->GetDuration(&lllen);
-  *pos = (int)(llpos / 10000);
-  *len = (int)(lllen / 10000);
+  mediaSeek->GetPositions(&llpos, &lllen);
+  *pos = (long)(llpos / 10000);
+  *len = (long)(lllen / 10000);
+  return true;
+}
+
+bool MediaPlayer::setPosition(long pos)
+{
+  if (openedItem.isNull() || !mediaSeek) {
+    return false;
+  }
+  LONGLONG llpos = pos * 10000;
+  mediaSeek->SetPositions(&llpos, AM_SEEKING_AbsolutePositioning,
+                          NULL, AM_SEEKING_NoPositioning);
   return true;
 }
 
@@ -158,33 +168,38 @@ void MediaPlayer::stop()
   mediaControl->Stop();
 }
 
-void MediaPlayer::volumeUp()
+void MediaPlayer::setVolume(int volume)
 { 
-  volume += 5;
   if (volume > 100)
     volume = 100;
+  if (volume < 0)
+    volume = 0;
+  appState->volume = this->volume = volume;
   if (basicAudio)
     basicAudio->put_Volume(volume*100 - 10000);
 }
 
-void MediaPlayer::volumeDown()
+void MediaPlayer::volumeUp() 
 {
-  volume -= 5;
-  if (volume < 0)
-    volume = 0;
-  if (basicAudio)
-    basicAudio->put_Volume(volume*100 - 10000);
+  if (mute) volumeMute();  // unmute if muted
+  setVolume(volume + 5); 
+}
+
+void MediaPlayer::volumeDown() 
+{ 
+  if (mute) volumeMute();  // unmute if muted
+  setVolume(volume - 5); 
 }
 
 void MediaPlayer::volumeMute()
 {
   if (!mute) {
-    if (basicAudio) basicAudio->put_Volume(-10000);
-    mute = true;
+    mute = volume;
+    setVolume(0);
   }
   else {
-    if (basicAudio) basicAudio->put_Volume(volume*100-10000);
-    mute = false;
+    setVolume(mute);
+    mute = 0;
   }
 }
 
@@ -193,7 +208,7 @@ void MediaPlayer::showAsVis()
   if (panel_on) activePanel->hide();    
   activePanel = visPanel;
   if (panel_on) activePanel->show();    
-  show();
+  display();
 }
 
 void MediaPlayer::showAsDVD() 
@@ -231,7 +246,7 @@ void MediaPlayer::showAsDVD()
 	openedItem = mi;
   }
   play();
-  show();
+  display();
 }
 
 void MediaPlayer::showAsVideo() 
@@ -239,7 +254,7 @@ void MediaPlayer::showAsVideo()
   if (panel_on) activePanel->hide();    
   activePanel = videoPanel;
   if (panel_on) activePanel->show();    
-  show();
+  display();
 }
 
 void MediaPlayer::moveEvent ( QMoveEvent *e ) 

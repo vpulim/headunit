@@ -49,8 +49,9 @@ int initializeGui(void)
       mediaPlayer->isNull())
     return ERROR;
   
+  menu->raise();
   menu->show();
-  
+
   return 0;
 }
 

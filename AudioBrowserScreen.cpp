@@ -38,14 +38,15 @@ AudioBrowserScreen::AudioBrowserScreen() : FunctionScreen("AudioBrowser")
 
 void AudioBrowserScreen::init() 
 {
-  connect(buttons[EXIT], SIGNAL(clicked()), audioPlayer, SLOT(show()));
-  connect(buttons[EXIT], SIGNAL(clicked()), this, SLOT(hide()));
+  connect(buttons[EXIT], SIGNAL(clicked()), this, SLOT(lower()));
   connect(buttons[DOWN], SIGNAL(clicked()), listView, SLOT(scrollDown()));
   connect(buttons[UP], SIGNAL(clicked()), listView, SLOT(scrollUp()));
   connect(buttons[PGDOWN], SIGNAL(clicked()), listView,SLOT(scrollPageDown()));
   connect(buttons[PGUP], SIGNAL(clicked()), listView, SLOT(scrollPageUp()));
   connect(buttons[SELECT], SIGNAL(clicked()), this, SLOT(selectFolder()));
   connect(buttons[PLUS], SIGNAL(clicked()), this, SLOT(selectFolderPlus()));
+  connect(buttons[BACK], SIGNAL(clicked()), this, SLOT(backFolder()));
+  connect(buttons[BROWSE], SIGNAL(clicked()), this, SLOT(browseFolder()));
   connect(listView,SIGNAL(highlighted(int)),this,SLOT(highlight(int)));
   connect(listView,SIGNAL(selected(int)),this, SLOT(select(int)));
 
@@ -88,29 +89,48 @@ void AudioBrowserScreen::highlight(int index)
 
 void AudioBrowserScreen::selectFolder() 
 {
-  QString path = currDir;
-  int i = listView->currentItem();
-  if (listView->isDir(i)) {
-    path += "/" + listView->dir(i);
-  }
-  emit folderSelected(path, false, 0);
+  folderSelect(false);
 }
 
 void AudioBrowserScreen::selectFolderPlus() 
 {
+  folderSelect(true);
+}
+
+void AudioBrowserScreen::folderSelect(bool plus)
+{
   QString path = currDir;
   int i = listView->currentItem();
   if (listView->isDir(i)) {
+    if (listView->dir(i) == "..") {
+      backFolder();
+      return;
+    }
     path += "/" + listView->dir(i);
   }
-  emit folderSelected(path, true, 0);
+  emit folderSelected(path, plus, 0);
+  lower();
 }
 
 void AudioBrowserScreen::select(int index) 
 {
   if (listView->isDir(index))
     setDir(currDir + "/" + listView->dir(index));
-  else
+  else {
     emit folderSelected(currDir, false, 0);
+    lower();
+  }
 }
 
+void AudioBrowserScreen::backFolder() 
+{
+  if (currDir != rootDir)
+    setDir(currDir + "/..");
+}
+
+void AudioBrowserScreen::browseFolder()
+{
+  int index = listView->currentItem();
+  if (listView->isDir(index))
+    setDir(currDir + "/" + listView->dir(index));
+}

@@ -19,6 +19,9 @@ const char *AudioPlayerScreen::buttonKeys[AudioPlayerScreen::NUM_BUTTONS] =
 const char *AudioPlayerScreen::labelKeys[AudioPlayerScreen::NUM_LABELS] = 
   {"TRACKNUMBER","TRACKNAME","PLAYLIST","VOLUME","STATUS","CURRENTTRACKTIME","TRACKTIME","TIME","DATE"};
 
+const char *AudioPlayerScreen::indicatorKeys[AudioPlayerScreen::NUM_INDICATORS] = 
+  {"SHUFFLE", "REPEAT", "MODE"};
+
 const char *AudioPlayerScreen::slKey = "S01";
 
 AudioPlayerScreen::AudioPlayerScreen() : FunctionScreen("AudioPlayer")
@@ -42,26 +45,30 @@ AudioPlayerScreen::AudioPlayerScreen() : FunctionScreen("AudioPlayer")
     labels[i] = skin.getLabel(labelKeys[i], *this);
   }
 
+  for (int i=0; i<NUM_INDICATORS; i++) {
+    indicators[i] = skin.getIndicator(indicatorKeys[i], *this);
+  }
+
   listView = skin.getSelectionList(slKey, *this);
-
   updateTimer = new QTimer(this);
-
   valid = true;
+  nextHeldLong = prevHeldLong = false;
 }
 
 void AudioPlayerScreen::init() {
-  connect(buttons[LIST], SIGNAL(clicked()), audioBrowser, SLOT(show()) );
-  connect(buttons[LIST], SIGNAL(clicked()), this, SLOT(hide()) );
-  connect(buttons[EXIT], SIGNAL(clicked()), menu, SLOT(show()) );
-  connect(buttons[EXIT], SIGNAL(clicked()), this, SLOT(hide()) );
+  connect(buttons[LIST], SIGNAL(clicked()), audioBrowser, SLOT(display()) );
+  connect(buttons[EXIT], SIGNAL(clicked()), this, SLOT(lower()) );
   connect(buttons[DOWN], SIGNAL(clicked()), listView, SLOT(scrollDown()));
   connect(buttons[UP], SIGNAL(clicked()), listView, SLOT(scrollUp()));
   connect(buttons[PGDOWN], SIGNAL(clicked()), listView,SLOT(scrollPageDown()));
   connect(buttons[PGUP], SIGNAL(clicked()), listView, SLOT(scrollPageUp()));
   connect(buttons[PLAY], SIGNAL(clicked()), this, SLOT(playpause()) );
   connect(buttons[STOP], SIGNAL(clicked()), this, SLOT(stop()) );
-  connect(buttons[PREV], SIGNAL(clicked()), this, SLOT(previous()) );
-  connect(buttons[NEXT], SIGNAL(clicked()), this, SLOT(next()) );
+  connect(buttons[PREV], SIGNAL(pressed()), this, SLOT(prevPressed()) );
+  connect(buttons[PREV], SIGNAL(released()), this, SLOT(prevReleased()) );
+  connect(buttons[NEXT], SIGNAL(pressed()), this, SLOT(nextPressed()) );
+  connect(buttons[NEXT], SIGNAL(released()), this, SLOT(nextReleased()) );
+  connect(buttons[MODE], SIGNAL(released()), this, SLOT(changeMode()) );
   connect(listView, SIGNAL(selected(int)), this, SLOT(play()) );
   connect(buttons[VOLUP], SIGNAL(clicked()), mediaPlayer, SLOT(volumeUp()) );
   connect(buttons[VOLDN], SIGNAL(clicked()), mediaPlayer, SLOT(volumeDown()) );
@@ -70,10 +77,11 @@ void AudioPlayerScreen::init() {
   connect(audioBrowser, SIGNAL(folderSelected(QString&, bool, int)), 
 	  this, SLOT(loadFolder(QString&, bool, int)));
   connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateInfo()));
-  updateTimer->changeInterval(500);
+  updateTimer->changeInterval(UPDATE_DELAY);
 
   loadFolder(appState->folderPath, appState->folderPlus, appState->folderIndex);
-  play();
+  playMode = (appState->playMode + NUM_MODES - 1) % NUM_MODES;
+  changeMode();  // to draw the right indicator
 }
 
 void AudioPlayerScreen::play()
@@ -109,23 +117,93 @@ void AudioPlayerScreen::stop()
   mediaPlayer->stop();
 }
 
-void AudioPlayerScreen::previous()
+bool AudioPlayerScreen::previous()
 {
-  listView->setCurrentItem(appState->folderIndex);
-  listView->scrollUp();
+  if (playMode == MODE_SHUFFLE || playMode == MODE_REPEATSHUFFLE) {
+    if (shufflePos == 0 && playMode != MODE_REPEATSHUFFLE)
+      return false;
+    shufflePos = (shufflePos + shuffleList.size() - 1) % shuffleList.size();
+    listView->setCurrentItem(shuffleList[shufflePos]);
+  }
+  else {
+    listView->setCurrentItem(appState->folderIndex);
+    if (!listView->scrollUp()) {
+      if (playMode == MODE_REPEAT)
+        listView->setCurrentItem(listView->count()-1);
+      else
+        return false; 
+    }
+  }
   if (!mediaPlayer->isStopped())
     play();
+  return true;
 }
 
-void AudioPlayerScreen::next()
+bool AudioPlayerScreen::next()
 {
-  listView->setCurrentItem(appState->folderIndex);
-
-  if (!listView->scrollDown())
-    return;
-  
+  if (playMode == MODE_SHUFFLE || playMode == MODE_REPEATSHUFFLE) {
+    shufflePos = (shufflePos + 1) % shuffleList.size();
+    if (shufflePos == 0 && playMode != MODE_REPEATSHUFFLE)
+      return false;
+    listView->setCurrentItem(shuffleList[shufflePos]);
+  }
+  else {
+    listView->setCurrentItem(appState->folderIndex);
+    if (!listView->scrollDown()) {
+      if (playMode == MODE_REPEAT)
+        listView->setCurrentItem(0);
+      else
+        return false; 
+    }
+  }
   if (!mediaPlayer->isStopped())
     play();
+  return true;
+}
+
+void AudioPlayerScreen::changeMode() 
+{
+  playMode = (playMode + 1) % NUM_MODES;
+  switch (playMode) {
+    case MODE_NORMAL:
+      indicators[IREPEAT]->hide();
+      indicators[ISHUFFLE]->hide();
+      break;
+    case MODE_REPEAT:
+      indicators[IREPEAT]->show();
+      break;
+    case MODE_SHUFFLE:
+      indicators[IREPEAT]->hide();
+      indicators[ISHUFFLE]->show();
+      break;
+    case MODE_REPEATSHUFFLE:
+      indicators[IREPEAT]->show();
+      break;
+  }
+}
+
+void AudioPlayerScreen::nextPressed()
+{
+  nextPressTime.start();
+}
+
+void AudioPlayerScreen::nextReleased()
+{
+  nextHeldLong = false;
+  if (nextPressTime.elapsed() < SLOW_SEEK_DELAY)
+    next();
+}
+
+void AudioPlayerScreen::prevPressed()
+{
+  prevPressTime.start();
+}
+
+void AudioPlayerScreen::prevReleased()
+{
+  prevHeldLong = false;
+  if (prevPressTime.elapsed() < SLOW_SEEK_DELAY)
+    previous();
 }
 
 void AudioPlayerScreen::endOfStreamReached()
@@ -143,6 +221,26 @@ void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index)
   }
   dbHandler->loadMusicList(p, plus, playList);
 
+  // setup random shuffle list
+  int *temp = (int *)malloc(sizeof(int)*playList.size());
+  srand(QTime::currentTime().msec());
+  for (int i=0; i<playList.size(); i++) {
+    if (i==0) {
+      temp[0]=0;
+      continue;
+    }
+    int randPos = rand() % i;
+    temp[i] = temp[randPos];
+    temp[randPos] = i;
+  }
+  shuffleList.clear();
+  shuffleList.reserve(playList.size());
+  for (int i=0;i<playList.size();i++)
+    shuffleList.append(temp[i]);
+  shufflePos = 0;
+  delete(temp);
+
+  // setup selection list
   listView->clear();
   int size = playList.size();
   for (int i=0; i<size; i++) {
@@ -153,11 +251,12 @@ void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index)
   appState->folderPath = p;
   appState->folderPlus = plus;
   appState->folderIndex = index;
+  play();
 }
 
 void AudioPlayerScreen::updateInfo()
 {
-  int pos = 0, len = 0;
+  long pos = 0, len = 0;
   if (mediaPlayer->isOpened()) {
     mediaPlayer->getPosition(&pos,&len);
   }
@@ -177,4 +276,42 @@ void AudioPlayerScreen::updateInfo()
   labels[VOLUME]->setText(QString::number(mediaPlayer->getVolume()) + "%");
   if (mediaPlayer->isPlaying() && pos == len)
     endOfStreamReached();
+
+  // check if prev or next buttons are being held down
+  long offset = 0;
+  if (buttons[NEXT]->isDown()) {
+    if (nextHeldLong || nextPressTime.elapsed() > FAST_SEEK_DELAY) {
+        offset = FAST_SEEK_MSECS;
+        nextHeldLong = true;  // must use this to prevent int overflow
+    }
+    else if (nextPressTime.elapsed() > MED_SEEK_DELAY)
+      offset = MED_SEEK_MSECS;
+    else if (nextPressTime.elapsed() > SLOW_SEEK_DELAY)
+      offset = SLOW_SEEK_MSECS;
+    if (offset) mediaPlayer->setPosition(pos + offset);
+  }
+  else if (buttons[PREV]->isDown()) {
+    if (prevHeldLong || prevPressTime.elapsed() > FAST_SEEK_DELAY) {
+        offset = FAST_SEEK_MSECS;
+        prevHeldLong = true;  // must use this to prevent int overflow
+    }
+    else if (prevPressTime.elapsed() > MED_SEEK_DELAY)
+      offset = MED_SEEK_MSECS;
+    else if (prevPressTime.elapsed() > SLOW_SEEK_DELAY)
+      offset = SLOW_SEEK_MSECS;
+    if (offset) {
+      if (pos - offset < 0) {
+        long diff = offset - pos;
+        if (previous()) {
+          mediaPlayer->getPosition(&pos,&len);
+          mediaPlayer->setPosition(len - diff);
+        }
+        else {
+          mediaPlayer->setPosition(0);
+        }
+      }
+      else
+        mediaPlayer->setPosition(pos - offset);
+    }
+  }
 }

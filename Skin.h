@@ -17,6 +17,7 @@ class Skin
   void set(QFrame &f);
   Button *getButton(const char *code, QWidget &parent);
   QLabel *getLabel(const char *code, QWidget &parent);
+  QLabel *getIndicator(const char *code, QWidget &parent);
   SelectionList *getSelectionList(const char *key, QWidget &parent);
   
  private:
