@@ -63,27 +63,25 @@ Skin::Skin(const QString &skinFileName)
   // load image files
   emptyImage = new QImage(empty);
   if (emptyImage->isNull()) {
-    qWarning("couldn't load skin file: %s", empty.latin1());
+    qWarning("couldn't load EMPTY skin file: %s", empty.latin1());
     delete emptyImage;
     return;
   }  
   offImage = new QImage(off);
   if (offImage->isNull()) {
-    qWarning("couldn't load skin file: %s", off.latin1());
+    qWarning("couldn't load OFF skin file: %s", off.latin1());
     delete emptyImage; delete offImage;
     return;
   }  
   onImage = new QImage(on);
   if (onImage->isNull()) {
-    qWarning("couldn't load skin file: %s", on.latin1());
-    delete emptyImage; delete offImage; delete onImage;
-    return;
+    qWarning("couldn't load ON skin file: %s (using OFF instead)", on.latin1());
+    onImage = new QImage(off);
   }  
   downImage = new QImage(down);
   if (downImage->isNull()) {
-    qWarning("couldn't load skin file: %s", down.latin1());
-    delete emptyImage; delete offImage; delete onImage; delete downImage;
-    return;
+    qWarning("couldn't load DOWN skin file: %s (using OFF instead)", down.latin1());
+    downImage = new QImage(off);
   }  
 
   // parse skin file
