@@ -40,6 +40,7 @@ Section "HeadUnit (required)"
   ; Put files there
   File "headunit.exe"
   File "D:\QT\3.2.1NonCommercial\bin\qt-mtnc321.dll"
+  File "D:\id3lib\bin\id3lib.dll"
   File "C:\WINDOWS\system32\msvcp70.dll"
   CreateDirectory $INSTDIR\plugins\sqldrivers
   File /oname=plugins\sqldrivers\qsqlite.dll "D:\QT\3.2.1NonCommercial\plugins\sqldrivers\qsqlite.dll"
@@ -80,6 +81,7 @@ Section "Uninstall"
   Delete $INSTDIR\headunit.db
   Delete $INSTDIR\uninstall.exe
   Delete $INSTDIR\qt-mtnc321.dll
+  Delete $INSTDIR\id3lib.dll
   Delete $INSTDIR\msvcp70.dll
   Delete $INSTDIR\plugins\sqldrivers
   Delete $INSTDIR\skins\Default\*
