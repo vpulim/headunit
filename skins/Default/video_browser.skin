@@ -1,0 +1,41 @@
+MEDIACAR Skin
+MEDIACAR Default "Video browser" skin
+video_browser_empty.jpg,video_browser_OFF.jpg,video_browser_ON.jpg,video_browser_down.jpg
+
+/, (B) Buttons
+/,  x   y   w   h   Code  tooltip
+/,  --- --- --- --- ----- -------
+B01,027,385,080,080,"SELECT","Select"
+B02,107,385,080,080,"BACK","Back"
+B03,187,385,080,080,"BROWSE","Browse"
+B05,781,405,065,065,"EXIT","Exit"
+B06,781,340,065,065,"PGDOWN","Page DOWN"
+B07,781,275,065,065,"DOWN","Down"
+B08,781,110,065,065,"UP","Up"
+B09,781,045,065,065,"PGUP","Page UP"
+
+/, (L) Label
+/,  x   y   w   h   r   g   b   pt font      Code   tooltip
+/,  --- --- --- --- --- --- --- -- ----      ----   -------
+L01,010,015,200,030,255,255,255,15,"Arial Black","TIME","Time"
+L02,700,015,200,030,255,255,255,15,"Arial Black","DATE","Date"
+
+/, (S) Selection list
+/,		    FORE	BACK        FOLDER      FILE        SELECTED    SELECT FONT
+/,  x   y   w   h   r   g   b   r   g   b   r   g   b   r   g   b   r   g   b   r   g   b   trs  pt font      
+/,  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---  -- ----      
+S01,290,070,470,380,226,244,123,000,000,000,255,255,128,255,255,255,000,000,000,255,255,255,TRUE,20,"Arial:B"
+
+/, (J) JAQUET Image
+/,  x   y   w   h   
+/,  --- --- --- ---
+J01,035,064,216,304
+
+/, (R) Movie Information
+/,		    FORE	BACK        
+/,  x   y   w   h   r   g   b   r   g   b   pt font      
+/,  --- --- --- --- --- --- --- --- --- --- -- ----      
+R01,001,001,001,001,255,255,255,255,255,255,15,"Arial:B"
+
+
+END
