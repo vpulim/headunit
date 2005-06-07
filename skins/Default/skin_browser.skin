@@ -1,0 +1,27 @@
+MEDIACAR Skin
+MEDIACAR Default "skin browser" skin
+browser_empty.jpg,browser_OFF.jpg,browser_ON.jpg,browser_down.jpg
+
+/, (B) Buttons
+/,  x   y   w   h   Code  tooltip
+/,  --- --- --- --- ----- -------
+B01,060,409,227,067,"SELECT","Select"
+B02,796,000,046,043,"EXIT","Exit"
+B03,778,410,064,061,"PGDOWN","Pg DOWN"
+B04,778,349,064,061,"DOWN","Down"
+B05,778,104,064,061,"UP","Up"
+B06,778,043,064,061,"PGUP","Pg UP"
+
+/, (S) Selection list
+/,		    FORE	BACK        SELECTED    SELECT FONT
+/,  x   y   w   h   r   g   b   r   g   b   r   g   b   r   g   b   trs  pt font      
+/,  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---  -- ----      
+S01,024,058,309,348,255,245,000,000,000,000,000,000,000,255,255,255,TRUE,20,"Arial:B"
+
+/, (J) SKIN Image
+/,  x   y   w   h   
+/,  --- --- --- ---
+J01,358,058,414,404
+
+
+END
