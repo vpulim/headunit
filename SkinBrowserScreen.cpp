@@ -64,18 +64,12 @@ void SkinBrowserScreen::init()
 
 void SkinBrowserScreen::setDir()
 {
-//   QDir dir(path, QString::null, QDir::Name | QDir::DirsFirst, QDir::Dirs);
-//   if (!dir.isReadable())
-//     return;
-//   QString currPath = dir.canonicalPath();
-//   if (!currPath.startsWith(rootDir))
-//     return;
 
   listView->clear();
 
 
   QDir dir("skins", QString::null, QDir::DirsFirst);
-  //dir.setMatchAllDirs(true);
+
 
   if (dir.isReadable()) { 	
 	QFileInfoList *entries = (QFileInfoList *)dir.entryInfoList();
@@ -84,33 +78,11 @@ void SkinBrowserScreen::setDir()
 	    if (fi->fileName().at(0) != '.')
 		listView->insertItem(fi->fileName());
     }
-  //listBoxSkins->setSelected(0, TRUE);
 
-  // read directories from file system
-  //currDir = currPath;
-  //QStringList entries = dir.entryList();
-  //QStringList::ConstIterator it = entries.constBegin();
-  //while (it != entries.constEnd()) {
-//    QString entry = *it;
-    //if (entry != "." && (entry != ".." || currDir != rootDir))
-        //listView->insertDir(entry);
-    //++it;
-  //}
-  
-  //TODO displayAlbumArt(currDir);
-
-  // read files from database using current directory as key
-  //dbHandler->loadMediaList(currDir, false, musicList);
-  //int size = musicList.size();
-  //for (int i=0; i<size; i++) {
-  //  listView->insertItem(musicList[i].displayText());
-  //}
 }
 
 void SkinBrowserScreen::highlight(int index) 
 {
-  //TODO if (listView->isDir(index))
-    //TODO displayAlbumArt(currDir + "/" + listView->dir(index));
     QString skinName("skins/");
     skinName.append(listView->text(index));
     skinName.append("/MENU_OFF.jpg");
@@ -119,7 +91,7 @@ void SkinBrowserScreen::highlight(int index)
     //skinPreview->setPixmap(preview);
 }
 
-void SkinBrowserScreen::displaySkin(const QString& key) { //TODO
+void SkinBrowserScreen::displaySkin(const QString& key) { // TODO
   QPixmap image(key);
   if (image.isNull()) {
     skinPreview->hide();

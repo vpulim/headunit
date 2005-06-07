@@ -10,13 +10,14 @@ class Slider : public QLabel
   void drawContents( QPainter *paint );
   void setBarPixmap( const QPixmap &pixmap );
   void setOrientation(Qt::Orientation o) { orientation = o; };
-  Qt::Orientation getOrientation() { return orientation; }
+  Qt::Orientation getOrientation() { return orientation; };
   void setValue(int v);
-  int getValue() { return value; }
+  int getValue() { return value; };
   void setMaxValue(int max);
-  int getMaxValue() { return maxValue; }
+  int getMaxValue() { return maxValue; };
   void setBarHeight(int h) { barHeight = h; };
-  int getBarHeight() { return barHeight; }
+  int getBarHeight() { return barHeight; };
+
 
  private:
   QPixmap *barpixmap;

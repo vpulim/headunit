@@ -4,6 +4,7 @@
 #include "HeadUnit.h"
 #include "MenuScreen.h"
 #include "AudioPlayerScreen.h"
+#include "SkinBrowserScreen.h"
 #include "VideoBrowserScreen.h"
 #include "Skin.h"
 #include "MediaPlayer.h"
@@ -15,6 +16,10 @@ const char *MenuScreen::keys[MenuScreen::NUM_BUTTONS] =
 
 const char *MenuScreen::labelKeys[MenuScreen::NUM_LABELS] = 
   {"TIME","DATE"};
+
+const char *MenuScreen::sliderKeys[MenuScreen::NUM_SLIDERS] = 
+  {"MASTER"};
+
 
 MenuScreen::MenuScreen(QWidget* parent) : FunctionScreen("Menu", parent)
 {
@@ -32,6 +37,10 @@ MenuScreen::MenuScreen(QWidget* parent) : FunctionScreen("Menu", parent)
     labels[i] = skin.getLabel(labelKeys[i], *this);
   }
 
+  for (int i=0; i<NUM_SLIDERS; i++) {
+    sliders[i] = skin.getSlider(sliderKeys[i], *this);
+  }
+
   updateTimer = new QTimer(this);
 
   valid = true;
@@ -47,7 +56,8 @@ void MenuScreen::init() {
   connect( buttons[VOLDN], SIGNAL(clicked()), mediaPlayer, SLOT(volumeDown()) );
   connect( buttons[MUTE], SIGNAL(clicked()), mediaPlayer, SLOT(volumeMute()) );
   connect( buttons[EXIT], SIGNAL(clicked()), qApp, SLOT(quit()) );
-  connect( buttons[APPEAR], SIGNAL(clicked()), configDialog, SLOT(exec()) );
+  //connect( buttons[APPEAR], SIGNAL(clicked()), configDialog, SLOT(exec()) );
+  connect( buttons[APPEAR], SIGNAL(clicked()), skinBrowser, SLOT(display()) );
   connect( updateTimer, SIGNAL(timeout()), this, SLOT(updateInfo()) );
   updateTimer->changeInterval(500);
 }
@@ -56,4 +66,6 @@ void MenuScreen::updateInfo()
 {
   labels[TIME]->setText(QTime::currentTime().toString("hh:mm:ss"));
   labels[DATE]->setText(QDate::currentDate().toString("d/M/yyyy"));
+//  labels[VOLUME]->setText(QString::number(mediaPlayer->getVolume()) + "%");
+  sliders[MASTER]->setValue(mediaPlayer->getVolume()/5);
 }

@@ -9,6 +9,7 @@ extern class AudioPlayerScreen *audioPlayer;
 extern class AudioBrowserScreen *audioBrowser;
 extern class VideoBrowserScreen *videoBrowser;
 extern class MediaPlayer *mediaPlayer;
+extern class SkinBrowserScreen *skinBrowser;
 extern class ConfigDialog *configDialog;
 extern class DBHandler *dbHandler;
 extern class ApplicationState *appState;

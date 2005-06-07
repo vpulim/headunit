@@ -5,6 +5,7 @@
 #include <qlabel.h>
 #include "Button.h"
 #include "SelectionList.h"
+#include "Slider.h"
 
 typedef QValueList<QStringList> SkinItemList;
 
@@ -19,6 +20,7 @@ class Skin
   QLabel *getLabel(const char *code, QWidget &parent);
   QLabel *getIndicator(const char *code, QWidget &parent);
   QLabel *getAlbumArt(QWidget &parent);
+  Slider *getSlider(const char *code, QWidget &parent);
   SelectionList *getSelectionList(const char *key, QWidget &parent);
   
  private:

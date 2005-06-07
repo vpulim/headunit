@@ -62,7 +62,7 @@ void Slider::drawContents( QPainter *paint )
     bitBlt(paint->device(), x, 0, &scaled,
  	   0, 0, scaled.width(), scaled.height(), Qt::CopyROP, TRUE);
   } else {
-    int y = height()*getValue()/getMaxValue();
+    int y = height() - (height()*getValue()/getMaxValue());
     QWMatrix m;
     m.scale(getBarHeight()/(double)barpixmap->width(), 1);
     QPixmap scaled = barpixmap->xForm(m);

@@ -7,6 +7,7 @@
 #include "MenuScreen.h"
 #include "AudioPlayerScreen.h"
 #include "AudioBrowserScreen.h"
+#include "SkinBrowserScreen.h"
 #include "VideoBrowserScreen.h"
 #include "MediaPlayer.h"
 #include "DBHandler.h"
@@ -19,6 +20,7 @@ AudioPlayerScreen *audioPlayer = NULL;
 AudioBrowserScreen *audioBrowser = NULL;
 VideoBrowserScreen *videoBrowser = NULL;
 MediaPlayer *mediaPlayer = NULL;
+SkinBrowserScreen *skinBrowser = NULL;
 ConfigDialog *configDialog;
 DBHandler *dbHandler;
 ApplicationState *appState;
@@ -29,24 +31,29 @@ QSettings settings;
 
 int initializeGui()
 {
+//  settings.setPath( "mp3car", "headunit" );
+
   top = new FunctionScreen("HeadUnit");
   menu = new MenuScreen(top);
   audioPlayer = new AudioPlayerScreen(top);
   audioBrowser = new AudioBrowserScreen(top);
   videoBrowser = new VideoBrowserScreen(top);
   mediaPlayer = new MediaPlayer(top);
+  skinBrowser = new SkinBrowserScreen(top);
 
   menu->init();
   audioPlayer->init();
   audioBrowser->init();
   videoBrowser->init();
   mediaPlayer->init();
+  skinBrowser->init();
   
   if (menu->isNull() || 
       audioPlayer->isNull() || 
       audioBrowser->isNull() || 
       videoBrowser->isNull() ||
-      mediaPlayer->isNull())
+      mediaPlayer->isNull() ||
+      skinBrowser->isNull())
     return ERROR;
   
   top->display();
@@ -71,6 +78,7 @@ int initializeGui()
 
 void destroyGui()
 {
+  QDESTROY(skinBrowser);
   QDESTROY(mediaPlayer);
   QDESTROY(audioPlayer);
   QDESTROY(audioBrowser);

@@ -1,11 +1,13 @@
 #include <qdir.h>
 #include <qfile.h>
 #include <qimage.h>
+#include <qregexp.h>
 #include <qsettings.h>
 #include "HeadUnit.h"
 #include "Button.h"
 #include "SelectionList.h"
 #include "Skin.h"
+#include "Slider.h"
 
 QString fixFileCase(QString path, QString file) {
   QDir dir(path);
@@ -24,6 +26,7 @@ QString fixFileCase(QString path, QString file) {
 Skin::Skin(const QString &skinFileName)
 {
   QString skin("skins/");
+  //settings.setPath( "mp3car", "headunit" );
   skin.append(settings.readEntry("headunit/skin", "Default"));
 
   // load skin file for the specified type
@@ -284,4 +287,55 @@ QLabel *Skin::getAlbumArt(QWidget &parent)
   l->setFrameShape(QFrame::NoFrame);
   l->setFrameShadow(QFrame::Plain);
   return l;
+}
+
+/**
+ * Get Slider
+ **/
+Slider *Skin::getSlider(const char *c, QWidget &parent)
+{
+  QString code(c);
+  code.prepend('"').append('"');
+  SkinItemList::const_iterator it = items.constBegin();
+  QStringList values;
+  while ( it != items.constEnd()) {
+    if ((*it).count() > 13 && (*it)[13] == code && (*it)[0][0] == 'S')
+	  values = *it;
+    ++it;
+  }
+  if (values.empty()) {
+    qWarning("skin item %s (slider) is not defined!",code.latin1());
+    return new Slider(&parent, code, Qt::Horizontal, 0, 23);
+  }
+  Qt::Orientation orientation;
+  int size;
+  if (values[9].compare("H") == 0 ) {
+    orientation = Qt::Horizontal;
+    size = values[8].toInt(); 
+  } else {
+    orientation = Qt::Vertical;
+    size = values[7].toInt(); 
+  }
+
+  Slider *s = new Slider(&parent, values[13], orientation, 20, size );
+  int x = values[1].toInt();
+  int y = values[2].toInt();
+  int w = values[3].toInt();
+  int h = values[4].toInt();
+  QString barPixPath("skins/");
+  barPixPath.append(settings.readEntry("headunit/skin", "Default"));
+  barPixPath.append("/");
+  int i = values[8].toInt();
+  QString v = values[11];
+  qWarning("The val 8 is : %i and value[11] is : %s", i, values[11].latin1());
+  values[11] = values[11].replace(values[11].find( '\\' , 0 ), 1, "/"); // Finds and replaces the \ to a /
+  //qWarning("The values[11] is : %s", values[11]);
+  barPixPath.append(fixFileCase(barPixPath, values[11].mid(1, values[11].length()-2)));
+  qWarning("The barPixPath is : %s", barPixPath.latin1());
+  s->move( x, y);
+  s->resize( w, h);
+  s->setBarPixmap(QPixmap(barPixPath));
+  s->setOrientation(orientation);
+  //b->setFlat(true);
+  return s;
 }

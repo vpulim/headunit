@@ -5,6 +5,7 @@
 
 class Button;
 class QLabel;
+class Slider;
 
 class MenuScreen : public FunctionScreen
 {
@@ -25,6 +26,10 @@ class MenuScreen : public FunctionScreen
   enum {TIME, DATE, NUM_LABELS};
   QLabel *labels[NUM_LABELS];
   static const char *labelKeys[NUM_LABELS];
+
+  enum {MASTER, NUM_SLIDERS};
+  Slider *sliders[NUM_SLIDERS];
+  static const char *sliderKeys[NUM_SLIDERS];
 
   QTimer *updateTimer;
 };
