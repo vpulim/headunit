@@ -71,6 +71,8 @@ class AudioPlayerScreen : public FunctionScreen
   int playMode;
   QTimer *updateTimer;
   long diff; // hack to get around a problem with Xine
+  QString trackName;	// Track name that scrolls
+  QString curTrackName; // Track name of current file
 };
 
 #endif
