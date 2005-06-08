@@ -4,12 +4,14 @@
 #include <qlabel.h>
 #include <qwmatrix.h>
 #include "HeadUnit.h"
-//#include "AudioPlayerScreen.h"
 #include "SkinBrowserScreen.h"
 #include "SelectionList.h"
 #include "FileItem.h"
 #include "Skin.h"
 #include "DBHandler.h"
+
+
+
 
 const char *SkinBrowserScreen::buttonKeys[SkinBrowserScreen::NUM_BUTTONS] = 
   { "SELECT", "EXIT", "PGDOWN", "DOWN", "UP", "PGUP" };
@@ -19,7 +21,7 @@ const char *SkinBrowserScreen::slKey = "S01";
 SkinBrowserScreen::SkinBrowserScreen(QWidget* parent) 
   : FunctionScreen("SkinBrowser", parent)
 {
-   Skin skin("skin_browser.skin"); //MOVED to init() so that reload skin works
+   Skin skin("skin_browser.skin");
    if (skin.isNull()) {
      return;
    }
@@ -91,7 +93,7 @@ void SkinBrowserScreen::highlight(int index)
     //skinPreview->setPixmap(preview);
 }
 
-void SkinBrowserScreen::displaySkin(const QString& key) { // TODO
+void SkinBrowserScreen::displaySkin(const QString& key) {
   QPixmap image(key);
   if (image.isNull()) {
     skinPreview->hide();
@@ -118,7 +120,6 @@ void SkinBrowserScreen::select()
     }
     destroyGui();
     initializeGui();
-
 //   if (listView->isDir(index))
 //     setDir(currDir + "/" + listView->dir(index));
 //   else {
