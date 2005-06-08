@@ -305,19 +305,23 @@ Slider *Skin::getSlider(const char *c, QWidget &parent)
   }
   if (values.empty()) {
     qWarning("skin item %s (slider) is not defined!",code.latin1());
-    return new Slider(&parent, code, Qt::Horizontal, 0, 23);
+    return new Slider(&parent, code, Qt::Horizontal, 0, 0, 0);
   }
   Qt::Orientation orientation;
-  int size;
+  int height;
+
   if (values[9].compare("H") == 0 ) {
+    height = values[8].toInt();
     orientation = Qt::Horizontal;
-    size = values[8].toInt(); 
   } else {
+    height = values[12].toInt();
     orientation = Qt::Vertical;
-    size = values[7].toInt(); 
   }
 
-  Slider *s = new Slider(&parent, values[13], orientation, 20, size );
+  
+  int width = values[7].toInt();
+
+  Slider *s = new Slider(&parent, values[13], orientation, 20, height, width );
   int x = values[1].toInt();
   int y = values[2].toInt();
   int w = values[3].toInt();
@@ -327,11 +331,11 @@ Slider *Skin::getSlider(const char *c, QWidget &parent)
   barPixPath.append("/");
   int i = values[8].toInt();
   QString v = values[11];
-  qWarning("The val 8 is : %i and value[11] is : %s", i, values[11].latin1());
+  //qWarning("The val 8 is : %i and value[11] is : %s", i, values[11].latin1());
   values[11] = values[11].replace(values[11].find( '\\' , 0 ), 1, "/"); // Finds and replaces the \ to a /
   //qWarning("The values[11] is : %s", values[11]);
   barPixPath.append(fixFileCase(barPixPath, values[11].mid(1, values[11].length()-2)));
-  qWarning("The barPixPath is : %s", barPixPath.latin1());
+  //qWarning("The barPixPath is : %s", barPixPath.latin1());
   s->move( x, y);
   s->resize( w, h);
   s->setBarPixmap(QPixmap(barPixPath));

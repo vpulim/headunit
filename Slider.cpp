@@ -8,13 +8,13 @@
 //#include "qbitmap.h"
 //#include "qpopupmenu.h"
 //#include "qguardedptr.h"
-//#include "qapplication.h"
+#include "qapplication.h"
 //#include "qtoolbar.h"
 //#include "qstyle.h"
 //#include "qaccessible.h"
 #include "Slider.h"
 
-Slider::Slider( QWidget *parent, const char *name,  Qt::Orientation o, int max, int h )
+Slider::Slider( QWidget *parent, const char *name,  Qt::Orientation o, int max, int h, int w )
   : QLabel( parent, name )
 {
   barpixmap = NULL;
@@ -22,6 +22,7 @@ Slider::Slider( QWidget *parent, const char *name,  Qt::Orientation o, int max, 
   maxValue = max;
   value = 0;
   barHeight = h;
+  barWidth = w;
   
   
       setBackgroundOrigin(AncestorOrigin);
@@ -54,17 +55,17 @@ void Slider::drawContents( QPainter *paint )
 //    }
    
   if (orientation == Qt::Horizontal) {
-    int x = width()*getValue()/getMaxValue();
+    int x = (width() - barpixmap->width())*getValue()/getMaxValue();
     QWMatrix m;
-    m.scale(1, getBarHeight()/(double)barpixmap->height() );
+    m.scale( 1, getBarHeight()/(double)barpixmap->height() );
     QPixmap scaled = barpixmap->xForm(m);
     
     bitBlt(paint->device(), x, 0, &scaled,
  	   0, 0, scaled.width(), scaled.height(), Qt::CopyROP, TRUE);
   } else {
-    int y = height() - (height()*getValue()/getMaxValue());
+    int y = height() - ((height() - getBarHeight())*getValue()/getMaxValue()) - getBarHeight() ;
     QWMatrix m;
-    m.scale(getBarHeight()/(double)barpixmap->width(), 1);
+    m.scale( getBarWidth()/(double)barpixmap->width(), getBarHeight()/(double)barpixmap->height() );
     QPixmap scaled = barpixmap->xForm(m);
     bitBlt(paint->device(), 0, y, &scaled, 
  	   0, 0, scaled.width(), scaled.height(), Qt::CopyROP, TRUE);

@@ -6,7 +6,7 @@
 class Slider : public QLabel
 {
  public:
-  Slider( QWidget *parent, const char *name, Qt::Orientation orientation, int max, int barHeight );
+  Slider( QWidget *parent, const char *name, Qt::Orientation orientation, int max, int barHeight, int barWidth );
   void drawContents( QPainter *paint );
   void setBarPixmap( const QPixmap &pixmap );
   void setOrientation(Qt::Orientation o) { orientation = o; };
@@ -17,6 +17,8 @@ class Slider : public QLabel
   int getMaxValue() { return maxValue; };
   void setBarHeight(int h) { barHeight = h; };
   int getBarHeight() { return barHeight; };
+  void setBarWidth(int w) { barWidth = w; };
+  int getBarWidth() { return barWidth; };
 
 
  private:
@@ -25,6 +27,7 @@ class Slider : public QLabel
   int maxValue;
   int value;
   int barHeight;
+  int barWidth;
   
 };
 
