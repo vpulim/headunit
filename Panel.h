@@ -53,6 +53,8 @@ class Panel : public FunctionScreen
   QTime prevPressTime;
   bool prevHeldLong;   // used to prevent int overflow
   long diff; // hack to get around a problem with Xine
+  QString trackName;	// Track name that scrolls
+  QString curTrackName; // Track name of current file
 };
 
 #endif

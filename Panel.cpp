@@ -40,6 +40,7 @@ Panel::Panel(QWidget *parent)
 
   diff = 0;
   valid = true;
+  trackName = " ";
 }
 
 void Panel::loadSkin() 
@@ -53,6 +54,7 @@ void Panel::loadSkin()
     buttons[i] = skin.getButton(keys[i], *this);
   for (int i=0; i<NUM_LABELS; i++)
     labels[i] = skin.getLabel(labelKeys[i], *this);
+
 }
 
 void Panel::updateInfo()
@@ -67,7 +69,27 @@ void Panel::updateInfo()
       appState->musicPos = pos;
   }
   QTime zero;
-  labels[TRACKNAME]->setText(mediaPlayer->getOpened().displayText());
+  
+  /** if no Track Name then get the current track name */
+  if (trackName.compare(" ") == 0) {
+      trackName = mediaPlayer->getOpened().displayText();
+      curTrackName = trackName;
+  }
+  /** if current Track changes, change the track name */
+  if (curTrackName.compare( mediaPlayer->getOpened().displayText() ) != 0) {
+      trackName = mediaPlayer->getOpened().displayText();
+      curTrackName = trackName;
+  }
+  labels[TRACKNAME]->setText(trackName);
+  if ( labels[TRACKNAME]->sizeHint().width() > labels[TRACKNAME]->size().width()) {
+     qWarning("find is : %i", trackName.find("**"));
+     if (trackName.find("**") == -1)
+        trackName.append(" *** ");
+
+     trackName = trackName.right( trackName.length()-1).append(trackName.left(1));
+
+  }
+  //labels[TRACKNAME]->setText(trackName);
   labels[CURRENTTRACKTIME]->setText(zero.addMSecs(pos).toString("mm:ss"));
   labels[TRACKTIME]->setText(zero.addMSecs(len).toString("mm:ss"));
   labels[TIME]->setText(QTime::currentTime().toString("hh:mm:ss"));
