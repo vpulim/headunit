@@ -86,7 +86,9 @@ void AudioPlayerScreen::init() {
   playMode = (appState->playMode + NUM_MODES - 1) % NUM_MODES;
   changeMode();  // to draw the right indicator
 }
-
+/**
+ * display() - display screen
+ **/
 void AudioPlayerScreen::display()
 {
   appState->function = ApplicationState::MUSIC;
@@ -103,6 +105,9 @@ void AudioPlayerScreen::display()
   FunctionScreen::display();
 }
 
+/**
+ * play() - play the song.
+ **/
 void AudioPlayerScreen::play()
 {
   int index = listView->currentItem();
@@ -117,6 +122,9 @@ void AudioPlayerScreen::play()
   mediaPlayer->play();
 }
 
+/**
+ * playpause() - Action of clicking Play button
+ **/
 void AudioPlayerScreen::playpause()
 {
   if (appState->musicIndex == listView->currentItem()) {
@@ -131,12 +139,18 @@ void AudioPlayerScreen::playpause()
     play();
 }
 
+/**
+ * stop() - Action of clicking Stop button
+ **/
 void AudioPlayerScreen::stop()
 {  
   mediaPlayer->stop();
   appState->musicPos = -1;
 }
 
+/**
+ * previous() - Action of clicking Previous button
+ **/
 bool AudioPlayerScreen::previous()
 {
   if (playMode == MODE_SHUFFLE || playMode == MODE_REPEATSHUFFLE) {
@@ -159,6 +173,9 @@ bool AudioPlayerScreen::previous()
   return true;
 }
 
+/**
+ * next() - Action of clicking Next button
+ **/
 bool AudioPlayerScreen::next()
 {
   if (playMode == MODE_SHUFFLE || playMode == MODE_REPEATSHUFFLE) {
@@ -181,6 +198,9 @@ bool AudioPlayerScreen::next()
   return true;
 }
 
+/**
+ * playpause() - Action of clicking Play button
+ **/
 void AudioPlayerScreen::changeMode() 
 {
   playMode = (playMode + 1) % NUM_MODES;
@@ -202,11 +222,17 @@ void AudioPlayerScreen::changeMode()
   }
 }
 
+/**
+ * nextPressed() - Action of pressing Next button (ff)
+ **/
 void AudioPlayerScreen::nextPressed()
 {
   nextPressTime.start();
 }
 
+/**
+ * nextReleased() - Action of Releasing Next button (stop ff)
+ **/
 void AudioPlayerScreen::nextReleased()
 {
   nextHeldLong = false;
@@ -214,11 +240,17 @@ void AudioPlayerScreen::nextReleased()
     next();
 }
 
+/**
+ * prevPressed() - Action of pressing Previous button (rew)
+ **/
 void AudioPlayerScreen::prevPressed()
 {
   prevPressTime.start();
 }
 
+/**
+ * prevReleased() - Action of pressing Previous button (stop rew)
+ **/
 void AudioPlayerScreen::prevReleased()
 {
   prevHeldLong = false;
@@ -226,11 +258,17 @@ void AudioPlayerScreen::prevReleased()
     previous();
 }
 
+/**
+ * endOfStreamReached() - Song is over, play next.
+ **/
 void AudioPlayerScreen::endOfStreamReached()
 {
   next();
 }
 
+/**
+ * loadFolder() - Put songs into list.
+ **/
 void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index, long pos)
 {
   QString p = path;
@@ -263,10 +301,13 @@ void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index, long pos
   delete(temp);
 
   // setup selection list
-  listView->clear();
+  if(!plus) 		// If you are not adding to list, clear it
+    listView->clear();
+
   int size = playList.size();
   for (int i=0; i<size; i++) {
-    listView->insertItem(QString::number(i+1)+". "+playList[i].displayText());
+    /** This change to the count fixes the problem with numbering when added to the list */
+    listView->insertItem(QString::number(listView->count()+1)+". "+playList[i].displayText()); 
   }
 
   listView->setCurrentItem(index);
@@ -279,6 +320,10 @@ void AudioPlayerScreen::loadFolder(QString& path, bool plus, int index, long pos
   }
 }
 
+/**
+ * updatateInfo() - Action of timer.
+ * 
+ **/
 void AudioPlayerScreen::updateInfo()
 {
   if (!mediaPlayer->isAudio())
@@ -288,7 +333,30 @@ void AudioPlayerScreen::updateInfo()
     appState->musicPos = pos;
   }
   QTime zero;
-  labels[TRACKNAME]->setText(mediaPlayer->getOpened().displayText());
+  //labels[TRACKNAME]->setText(mediaPlayer->getOpened().displayText());
+
+  /** if no Track Name then get the current track name */
+  if (trackName.compare(" ") == 0) {
+      trackName = mediaPlayer->getOpened().displayText();
+      curTrackName = trackName;
+  }
+  /** if current Track changes, change the track name */
+  if (curTrackName.compare( mediaPlayer->getOpened().displayText() ) != 0) {
+      trackName = mediaPlayer->getOpened().displayText();
+      curTrackName = trackName;
+  }
+
+  labels[TRACKNAME]->setText(trackName);
+
+  /** If the title is larger than the label, scrol text */
+  if ( labels[TRACKNAME]->sizeHint().width() > labels[TRACKNAME]->size().width()) {
+     /** Add Stars to indicate the end of the title */	
+     if (trackName.find("**") == -1)
+        trackName.append(" *** ");
+
+     trackName = trackName.right( trackName.length()-1).append(trackName.left(1));
+  }
+
   labels[CURRENTTRACKTIME]->setText(zero.addMSecs(pos).toString("mm:ss"));
   labels[TRACKTIME]->setText(zero.addMSecs(len).toString("mm:ss"));
   labels[TIME]->setText(QTime::currentTime().toString("hh:mm:ss"));
