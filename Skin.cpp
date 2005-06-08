@@ -64,24 +64,37 @@ Skin::Skin(const QString &skinFileName)
   down.append(fixFileCase(skin, files.section(',',3,3)));
 
   // load image files
-  emptyImage = new QImage(empty);
+  /** 
+   * 128 = nutral, 64 = darker, 192 = lighter
+   * I don't know if this is good enought for gamma
+   **/
+  int gammaVal = 128;
+
+  //emptyImage = new QImage(empty);
+  emptyImage = gamma(gammaVal, QImage(empty));
+
+  
   if (emptyImage->isNull()) {
     qWarning("couldn't load EMPTY skin file: %s", empty.latin1());
     delete emptyImage;
     return;
   }  
-  offImage = new QImage(off);
+  //offImage = new QImage(off);
+  offImage = gamma(gammaVal, QImage(off));
+
   if (offImage->isNull()) {
     qWarning("couldn't load OFF skin file: %s", off.latin1());
     delete emptyImage; delete offImage;
     return;
   }  
-  onImage = new QImage(on);
+  //onImage = new QImage(on);
+  onImage = gamma(gammaVal, QImage(on));
   if (onImage->isNull()) {
     qWarning("couldn't load ON skin file: %s (using OFF instead)", on.latin1());
     onImage = new QImage(off);
   }  
-  downImage = new QImage(down);
+  //downImage = new QImage(down);
+  downImage = gamma(gammaVal, QImage(down));
   if (downImage->isNull()) {
     qWarning("couldn't load DOWN skin file: %s (using OFF instead)", down.latin1());
     downImage = new QImage(off);
@@ -331,15 +344,62 @@ Slider *Skin::getSlider(const char *c, QWidget &parent)
   barPixPath.append("/");
   int i = values[8].toInt();
   QString v = values[11];
-  //qWarning("The val 8 is : %i and value[11] is : %s", i, values[11].latin1());
+
   values[11] = values[11].replace(values[11].find( '\\' , 0 ), 1, "/"); // Finds and replaces the \ to a /
-  //qWarning("The values[11] is : %s", values[11]);
   barPixPath.append(fixFileCase(barPixPath, values[11].mid(1, values[11].length()-2)));
-  //qWarning("The barPixPath is : %s", barPixPath.latin1());
+
   s->move( x, y);
   s->resize( w, h);
   s->setBarPixmap(QPixmap(barPixPath));
   s->setOrientation(orientation);
   //b->setFlat(true);
   return s;
+}
+
+QImage *Skin::gamma(int c, QImage image)
+{
+
+        //QImage newImage(image);
+    if ( image == NULL )
+                return new QImage();
+        int dep = image.depth();
+        int hei = image.height();
+        int wid = image.width();
+        unsigned char* bits = image.bits();
+        int numc = image.numColors();
+        int pixels;
+        unsigned int * data;
+
+        if(c > 255)
+         c = 255;
+     if(c < -255)
+         c =  -255;
+         if ( dep > 8 )
+         {
+                pixels = wid * hei ;
+                data = (unsigned int*) bits ;
+         }
+         else
+         {
+                 pixels = numc;
+                 data = image.colorTable();
+         }
+     for(int i=0; i < pixels; ++i){
+         int r,g,b;
+                 r = qRed(data[i]);
+         g = qGreen(data[i]);
+         b = qBlue(data[i]);
+
+                 QColor myCol;
+                 myCol.setRgb(r,g,b);
+                 if ( c < 128 )
+                 myCol = myCol.dark(100+(128-c));
+                 else
+                 myCol = myCol.light(100+(c-128));
+
+                 data[i] = qRgba(myCol.red(),myCol.green(),myCol.blue(), 
+qAlpha(data[i]));
+         }
+         return new QImage(image);
+
 }

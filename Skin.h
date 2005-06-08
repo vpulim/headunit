@@ -22,6 +22,7 @@ class Skin
   QLabel *getAlbumArt(QWidget &parent);
   Slider *getSlider(const char *code, QWidget &parent);
   SelectionList *getSelectionList(const char *key, QWidget &parent);
+  QImage* gamma(int c, QImage image);
   
  private:
   SkinItemList items;
