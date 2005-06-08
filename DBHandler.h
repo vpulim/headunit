@@ -11,10 +11,10 @@
 #define QUERY_MEDIA_ITEM_BY_ID "select id, mrl, artist, album, title, genre, key from media where id = :id"
 
 // Playlist table
-#define CREATE_PLAYLIST_TABLE "create table playlist (id integer primary key, mrl text)"
+#define CREATE_PLAYLIST_TABLE "create table playlist (id integer primary key, name text, description text, type text)"
 #define TRUNCATE_PLAYLIST_TABLE "drop table playlist"
-#define INSERT_PLAYLIST "insert into playlist (mrl) values (:mrl)"
-#define QUERY_PLAYLIST "select mrl from playlist"
+#define INSERT_PLAYLIST "insert into playlist (name, description, type) values (:name, :description, :type)"
+#define QUERY_PLAYLIST "select name, description, type from playlist"
 
 // State table
 #define CREATE_STATE_TABLE "create table state (var text primary key, value text)"
