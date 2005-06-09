@@ -92,7 +92,6 @@ void Slider::setMaxValue(int max) {
 
 void Slider::setValue(int v) {
   value = v;
-  //drawContents(new QPainter(this));
   repaint();
 }
 
