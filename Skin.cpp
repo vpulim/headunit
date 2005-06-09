@@ -65,15 +65,13 @@ Skin::Skin(const QString &skinFileName)
 
   // load image files
   /** 
-   * 128 = nutral, 64 = darker, 192 = lighter
+   * 127 = nutral, 64 = darker, 192 = lighter
    * I don't know if this is good enought for gamma
    **/
-  int gammaVal = 128;
+  int gammaVal = 127;
 
   //emptyImage = new QImage(empty);
   emptyImage = gamma(gammaVal, QImage(empty));
-
-  
   if (emptyImage->isNull()) {
     qWarning("couldn't load EMPTY skin file: %s", empty.latin1());
     delete emptyImage;
@@ -81,10 +79,9 @@ Skin::Skin(const QString &skinFileName)
   }  
   //offImage = new QImage(off);
   offImage = gamma(gammaVal, QImage(off));
-
   if (offImage->isNull()) {
     qWarning("couldn't load OFF skin file: %s", off.latin1());
-    delete emptyImage; delete offImage;
+    /*delete emptyImage; */delete offImage;
     return;
   }  
   //onImage = new QImage(on);
@@ -101,16 +98,20 @@ Skin::Skin(const QString &skinFileName)
   }  
 
   // parse skin file
+
   while (skinFile.readLine(line, 255) >= 0) {
     if (line[0] == ' ' || line[0] == '/' ||
 	line[0] == '\r' || line[0] == '\n' ||
-	(line[0] == 'E' && line[1] == 'N'))
+	(line[0] == 'E' && line[1] == 'N')) {
+      items += "";
       continue;
+    }
     QString l(line);
     l = l.stripWhiteSpace();
     QStringList values = QStringList::split(",", l, true);
     items += values;
   }
+
 }
 
 Skin::~Skin() 
@@ -170,7 +171,6 @@ QLabel *Skin::getLabel(const char *c, QWidget &parent)
     ++it;
   }
   if (values.empty()) {
-    qWarning("skin item %s (label) is not defined!",code.latin1());
     return new QLabel(&parent, code);
   }
   QLabel *l = new QLabel(&parent, values[10]);
