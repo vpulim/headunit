@@ -80,16 +80,18 @@ void Panel::updateInfo()
       trackName = mediaPlayer->getOpened().displayText();
       curTrackName = trackName;
   }
+
   labels[TRACKNAME]->setText(trackName);
+
+  /** If the title is larger than the label, scrol text */
   if ( labels[TRACKNAME]->sizeHint().width() > labels[TRACKNAME]->size().width()) {
-     qWarning("find is : %i", trackName.find("**"));
+     /** Add Stars to indicate the end of the title */	
      if (trackName.find("**") == -1)
         trackName.append(" *** ");
 
      trackName = trackName.right( trackName.length()-1).append(trackName.left(1));
-
   }
-  //labels[TRACKNAME]->setText(trackName);
+
   labels[CURRENTTRACKTIME]->setText(zero.addMSecs(pos).toString("mm:ss"));
   labels[TRACKTIME]->setText(zero.addMSecs(len).toString("mm:ss"));
   labels[TIME]->setText(QTime::currentTime().toString("hh:mm:ss"));
