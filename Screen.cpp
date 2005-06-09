@@ -8,15 +8,25 @@ FunctionScreen::FunctionScreen(const char *name, QWidget *parent)
 	     Qt::WStyle_Customize | 
 	     Qt::WStyle_NoBorderEx )
 {
-  Skin skin("menu.skin");
-  if (skin.isNull()) {
-    return;
-  }
-  skin.set(*this);
+//    Skin skin("wait.skin");
+//    if (skin.isNull()) {
+//      return;
+//    }
+//    skin.set(*this);
+//  setSkin();
   move(0,0);
   valid = false;
 }
 
+void FunctionScreen::initSkin(const QString &skinFileName){
+  //Skin skin("wait.skin");
+  Skin skin(skinFileName);
+  if (skin.isNull()) {
+    return;
+  }
+  skin.set(*this);
+
+}
 void FunctionScreen::display()
 {
   raise();

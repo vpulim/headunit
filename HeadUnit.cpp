@@ -3,6 +3,7 @@
 #include <qsqldatabase.h>
 #include <qdir.h>
 #include <qfiledialog.h>
+#include <qcolor.h>
 #include "HeadUnit.h"
 #include "MenuScreen.h"
 #include "AudioPlayerScreen.h"
@@ -32,8 +33,19 @@ QSettings settings;
 int initializeGui()
 {
 //  settings.setPath( "mp3car", "headunit" );
+  if( top == NULL ) {
+    top = new FunctionScreen("HeadUnit");
+    top->initSkin("wait.skin");
+    //top->repaint();
+//     top->setBackgroundColor(Qt::black);
+//     top->setPaletteForegroundColor(Qt::white);
+//     top->setFont( QFont( "Helvetica", 12, QFont::Bold ))
+//     top->drawText(10, 10, QString("Loading..."));
 
-  top = new FunctionScreen("HeadUnit");
+    top->display();
+  }
+  top->initSkin("wait.skin");
+  top->repaint();
   menu = new MenuScreen(top);
   audioPlayer = new AudioPlayerScreen(top);
   audioBrowser = new AudioBrowserScreen(top);
@@ -56,7 +68,7 @@ int initializeGui()
       skinBrowser->isNull())
     return ERROR;
   
-  top->display();
+//   top->display();
   menu->display();
 
   switch (appState->function) {
@@ -84,9 +96,51 @@ void destroyGui()
   QDESTROY(audioBrowser);
   QDESTROY(videoBrowser);
   QDESTROY(menu);
-  QDESTROY(top);
+  //QDESTROY(top);
 }
 
+void refreshGui() {
+  top->initSkin("wait.skin");
+  top->repaint();
+  //top->display();
+   menu->hide();
+   videoBrowser->hide();
+   audioBrowser->hide();
+   mediaPlayer->hide();
+   audioPlayer->hide();
+   skinBrowser->hide();
+  //top->display();
+  qWarning("before menu initSkin");
+  menu->erase(0,0, menu->width(), menu->height());
+  menu->initSkin();
+  qWarning("after menu initSkin");
+  //videoBrowser->initSkin("video_browser.skin");
+  //audioBrowser->initSkin("audio_browser.skin");
+  //mediaPlayer->initSkin("video_player.skin");
+  //audioPlayer->initSkin("audio_player.skin");
+  skinBrowser->initSkin();
+  
+  menu->erase(0,0, menu->width(), menu->height());
+//   videoBrowser->repaint();
+//   audioBrowser->repaint();
+//   mediaPlayer->repaint();
+//   audioPlayer->repaint();
+//   skinBrowser->repaint();
+   qWarning("before inits");
+   menu->init();
+   audioPlayer->init();
+   audioBrowser->init();
+   videoBrowser->init();
+   mediaPlayer->init();
+   skinBrowser->init();
+//   videoBrowser->display();
+//   audioBrowser->display();
+//   mediaPlayer->display();
+//   audioPlayer->display();
+//   skinBrowser->display();
+  menu->display();
+  
+}
 int main( int argc, char **argv )
 {
   QApplication a( argc, argv );

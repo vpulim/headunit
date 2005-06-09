@@ -13,6 +13,7 @@ class MenuScreen : public FunctionScreen
  public:
   MenuScreen(QWidget* parent = 0);
   void init();
+  virtual void initSkin();
 
  private slots:
   void updateInfo();

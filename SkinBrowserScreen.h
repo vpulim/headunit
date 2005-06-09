@@ -17,11 +17,10 @@ class SkinBrowserScreen : public FunctionScreen
   SkinBrowserScreen(QString name, QWidget* parent = 0)
     :FunctionScreen(name, parent) {};
   void init();
-
+  void initSkin();
  private slots:
   void highlight(int);  
   void select();
-  //void setSkin();
   //void selectFolderPlus();
   //void backFolder();
   //void browseFolder();

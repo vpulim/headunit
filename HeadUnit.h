@@ -20,4 +20,5 @@ QString askMediaPath(void);
 void setMediaPath(QString path);
 int initializeGui();
 void destroyGui();
+void refreshGui();
 #endif 

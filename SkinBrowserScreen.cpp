@@ -37,17 +37,34 @@ SkinBrowserScreen::SkinBrowserScreen(QWidget* parent)
   skinPreview = skin.getAlbumArt(*this);
 
    listView = skin.getSelectionList(slKey, *this);
-  //rootDir = settings.readEntry( "headunit/musicpath" , "./" );
-  //QDir rootDir("skins", QString::null, QDir::DirsFirst);
-  //rootDir.setMatchAllDirs(true);
-  //rootDir = rootDir.canonicalPath();
+
+  //initSkin();
+
   valid = true;
 }
+void SkinBrowserScreen::initSkin(){
+ Skin skin("skin_browser.skin");
+   if (skin.isNull()) {
+     return;
+   }
+   skin.set(*this);
+
+   for (int i=0; i<NUM_BUTTONS; i++) {
+     buttons[i] = skin.getButton(buttonKeys[i], *this);
+   }
+  buttons[UP]->setAutoRepeat(true);
+  buttons[DOWN]->setAutoRepeat(true);
+  buttons[PGUP]->setAutoRepeat(true);
+  buttons[PGDOWN]->setAutoRepeat(true);
+
+  skinPreview = skin.getAlbumArt(*this);
+
+  listView = skin.getSelectionList(slKey, *this);
+}
+
 
 void SkinBrowserScreen::init() 
 {
-
-
 
   connect(buttons[EXIT], SIGNAL(clicked()), this, SLOT(lower()));
   connect(buttons[DOWN], SIGNAL(clicked()), listView, SLOT(scrollDown()));
@@ -120,6 +137,8 @@ void SkinBrowserScreen::select()
     }
     destroyGui();
     initializeGui();
+    //refreshGui();
+    //destroyGui();
 //   if (listView->isDir(index))
 //     setDir(currDir + "/" + listView->dir(index));
 //   else {

@@ -23,15 +23,16 @@ const char *MenuScreen::sliderKeys[MenuScreen::NUM_SLIDERS] =
 
 MenuScreen::MenuScreen(QWidget* parent) : FunctionScreen("Menu", parent)
 {
-  Skin skin("menu.skin");
-  if (skin.isNull()) {
-    return;
-  }
-  skin.set(*this);
+   Skin skin("menu.skin");
+   if (skin.isNull()) {
+     return;
+   }
+   skin.set(*this);
+   
   for (int i=0; i<NUM_BUTTONS; i++) {
     buttons[i] = skin.getButton(keys[i], *this);
   }
-//  buttons[MUTE]->setToggleButton(true);
+  buttons[MUTE]->setToggleButton(true);
 
   for (int i=0; i<NUM_LABELS; i++) {
     labels[i] = skin.getLabel(labelKeys[i], *this);
@@ -42,10 +43,34 @@ MenuScreen::MenuScreen(QWidget* parent) : FunctionScreen("Menu", parent)
   }
 
   updateTimer = new QTimer(this);
-
+//   initSkin();
   valid = true;
 }
 
+void MenuScreen::initSkin(){
+
+  Skin skin("menu.skin");
+  if (skin.isNull()) {
+    return;
+  }
+  skin.set(*this);
+  
+  for (int i=0; i<NUM_BUTTONS; i++) {
+    qWarning(" i : %i, Num %i", i, NUM_BUTTONS);
+    buttons[i] = skin.getButton(keys[i], *this);
+  }
+  buttons[MUTE]->setToggleButton(true);
+
+  for (int i=0; i<NUM_LABELS; i++) {
+    labels[i] = skin.getLabel(labelKeys[i], *this);
+  }
+
+  for (int i=0; i<NUM_SLIDERS; i++) {
+    sliders[i] = skin.getSlider(sliderKeys[i], *this);
+  }
+
+  updateTimer = new QTimer(this);
+}
 void MenuScreen::init() {
   connect( buttons[AUDIO], SIGNAL(clicked()), audioPlayer, SLOT(display()) );
 //  connect( buttons[AUDIO], SIGNAL(clicked()), this, SLOT(hide()) );

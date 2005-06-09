@@ -2,6 +2,7 @@
 #define SCREEN_H
 
 #include <qframe.h>
+#include <Skin.h>
 
 class FunctionScreen : public QFrame
 {
@@ -10,6 +11,7 @@ class FunctionScreen : public QFrame
   FunctionScreen(const char *name, QWidget *parent = 0);
   bool isNull() { return !valid; };
   void init() {};
+  virtual void initSkin(const QString &skinFileName);
 
  public slots:
   void display();
