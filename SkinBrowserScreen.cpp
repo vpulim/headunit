@@ -42,6 +42,10 @@ SkinBrowserScreen::SkinBrowserScreen(QWidget* parent)
 
   valid = true;
 }
+
+/**
+ * initSkin(), Reloads the skin after a skin change
+ **/
 void SkinBrowserScreen::initSkin(){
  Skin skin("skin_browser.skin");
    if (skin.isNull()) {
@@ -50,15 +54,18 @@ void SkinBrowserScreen::initSkin(){
    skin.set(*this);
 
    for (int i=0; i<NUM_BUTTONS; i++) {
+     buttons[i]->close();
      buttons[i] = skin.getButton(buttonKeys[i], *this);
    }
   buttons[UP]->setAutoRepeat(true);
   buttons[DOWN]->setAutoRepeat(true);
   buttons[PGUP]->setAutoRepeat(true);
   buttons[PGDOWN]->setAutoRepeat(true);
-
+  
+  skinPreview->close();
   skinPreview = skin.getAlbumArt(*this);
-
+  
+  listView->close();
   listView = skin.getSelectionList(slKey, *this);
 }
 
@@ -135,9 +142,9 @@ void SkinBrowserScreen::select()
     if (!skin.isNull() && !skin.isEmpty()) {
 	settings.writeEntry( "/headunit/skin", skin);
     }
-    destroyGui();
-    initializeGui();
-    //refreshGui();
+    //destroyGui();
+    //initializeGui();
+    refreshGui();
     //destroyGui();
 //   if (listView->isDir(index))
 //     setDir(currDir + "/" + listView->dir(index));

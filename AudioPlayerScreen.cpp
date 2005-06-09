@@ -57,6 +57,41 @@ AudioPlayerScreen::AudioPlayerScreen(QWidget* parent)
   diff = 0;
 }
 
+/**
+ * initSkin(), Reloads the skin after a skin change
+ **/
+void AudioPlayerScreen::initSkin(){
+  Skin skin("Audio_Player.skin");
+  if (skin.isNull()) {
+    return;
+  }
+  skin.set(*this);
+  for (int i=0; i<NUM_BUTTONS; i++) {
+    buttons[i]->close();
+    buttons[i] = skin.getButton(buttonKeys[i], *this);
+  }
+  buttons[UP]->setAutoRepeat(true);
+  buttons[DOWN]->setAutoRepeat(true);
+  buttons[PGUP]->setAutoRepeat(true);
+  buttons[PGDOWN]->setAutoRepeat(true);
+  buttons[VOLUP]->setAutoRepeat(true);
+  buttons[VOLDN]->setAutoRepeat(true);
+  
+  for (int i=0; i<NUM_LABELS; i++) {
+    labels[i]->close();
+    labels[i] = skin.getLabel(labelKeys[i], *this);
+  }
+
+  for (int i=0; i<NUM_INDICATORS; i++) {
+    indicators[i]->close();
+    indicators[i] = skin.getIndicator(indicatorKeys[i], *this);
+  }
+  
+  listView->close();
+  listView = skin.getSelectionList(slKey, *this);
+
+}
+
 void AudioPlayerScreen::init() {
   connect(buttons[LIST], SIGNAL(clicked()), audioBrowser, SLOT(display()) );
   connect(buttons[EXIT], SIGNAL(clicked()), this, SLOT(lower()) );

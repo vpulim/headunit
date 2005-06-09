@@ -34,6 +34,33 @@ VideoBrowserScreen::VideoBrowserScreen(QWidget* parent)
   rootDir = dir.canonicalPath();
   valid = true;
 }
+/**
+ * initSkin(), Reloads the skin after a skin change
+ **/
+void VideoBrowserScreen::initSkin(){
+  Skin skin("video_browser.skin");
+  if (skin.isNull()) {
+    return;
+  }
+  skin.set(*this);
+  for (int i=0; i<NUM_BUTTONS; i++) {
+    buttons[i]->close();
+    buttons[i] = skin.getButton(buttonKeys[i], *this);
+  }
+  buttons[UP]->setAutoRepeat(true);
+  buttons[DOWN]->setAutoRepeat(true);
+  buttons[PGUP]->setAutoRepeat(true);
+  buttons[PGDOWN]->setAutoRepeat(true);
+
+  cover->close();
+  cover = skin.getAlbumArt(*this);
+
+  listView->close();
+  listView = skin.getSelectionList(slKey, *this);
+  rootDir = settings.readEntry( "headunit/videopath" , "./" );
+  QDir dir(rootDir);
+  rootDir = dir.canonicalPath();
+}
 
 void VideoBrowserScreen::init() 
 {

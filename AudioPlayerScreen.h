@@ -23,6 +23,7 @@ class AudioPlayerScreen : public FunctionScreen
  public:
   AudioPlayerScreen(QWidget* parent = 0);
   void init();
+  void initSkin();
 
  public slots:
   void endOfStreamReached();

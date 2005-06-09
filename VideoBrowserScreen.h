@@ -15,6 +15,7 @@ class VideoBrowserScreen : public AudioBrowserScreen
  public:
   VideoBrowserScreen(QWidget* parent = 0);
   void init();
+  void initSkin();
 
  protected:
   enum {SELECT, BACK, BROWSE, EXIT, PGDOWN, DOWN, UP, PGUP, NUM_BUTTONS};

@@ -16,6 +16,7 @@ class AudioBrowserScreen : public FunctionScreen
   AudioBrowserScreen(QString name, QWidget* parent = 0)
     :FunctionScreen(name, parent) {};
   void init();
+  void initSkin();
 
  private slots:
   void highlight(int);  

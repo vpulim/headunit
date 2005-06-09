@@ -43,9 +43,10 @@ int initializeGui()
 //     top->drawText(10, 10, QString("Loading..."));
 
     top->display();
+  } else {
+    top->initSkin("wait.skin");
+    top->repaint();
   }
-  top->initSkin("wait.skin");
-  top->repaint();
   menu = new MenuScreen(top);
   audioPlayer = new AudioPlayerScreen(top);
   audioBrowser = new AudioBrowserScreen(top);
@@ -54,6 +55,7 @@ int initializeGui()
   skinBrowser = new SkinBrowserScreen(top);
 
   menu->init();
+  //menu->display();
   audioPlayer->init();
   audioBrowser->init();
   videoBrowser->init();
@@ -101,44 +103,32 @@ void destroyGui()
 
 void refreshGui() {
   top->initSkin("wait.skin");
-  top->repaint();
-  //top->display();
+
    menu->hide();
    videoBrowser->hide();
    audioBrowser->hide();
-   mediaPlayer->hide();
+   //mediaPlayer->hide();
+   //QDESTROY(mediaPlayer);
    audioPlayer->hide();
    skinBrowser->hide();
-  //top->display();
-  qWarning("before menu initSkin");
-  menu->erase(0,0, menu->width(), menu->height());
+
+
   menu->initSkin();
-  qWarning("after menu initSkin");
-  //videoBrowser->initSkin("video_browser.skin");
-  //audioBrowser->initSkin("audio_browser.skin");
-  //mediaPlayer->initSkin("video_player.skin");
-  //audioPlayer->initSkin("audio_player.skin");
+  videoBrowser->initSkin();
+  audioBrowser->initSkin();
+  //mediaPlayer->initSkin();
+  //mediaPlayer = new MediaPlayer(top);
+  audioPlayer->initSkin();
   skinBrowser->initSkin();
   
-  menu->erase(0,0, menu->width(), menu->height());
-//   videoBrowser->repaint();
-//   audioBrowser->repaint();
-//   mediaPlayer->repaint();
-//   audioPlayer->repaint();
-//   skinBrowser->repaint();
-   qWarning("before inits");
    menu->init();
    audioPlayer->init();
    audioBrowser->init();
    videoBrowser->init();
    mediaPlayer->init();
    skinBrowser->init();
-//   videoBrowser->display();
-//   audioBrowser->display();
-//   mediaPlayer->display();
-//   audioPlayer->display();
-//   skinBrowser->display();
-  menu->display();
+
+   menu->display();
   
 }
 int main( int argc, char **argv )

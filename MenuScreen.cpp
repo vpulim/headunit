@@ -47,6 +47,9 @@ MenuScreen::MenuScreen(QWidget* parent) : FunctionScreen("Menu", parent)
   valid = true;
 }
 
+/**
+ * initSkin(), Reloads the skin after a skin change
+ **/
 void MenuScreen::initSkin(){
 
   Skin skin("menu.skin");
@@ -56,20 +59,21 @@ void MenuScreen::initSkin(){
   skin.set(*this);
   
   for (int i=0; i<NUM_BUTTONS; i++) {
-    qWarning(" i : %i, Num %i", i, NUM_BUTTONS);
+    buttons[i]->close();
     buttons[i] = skin.getButton(keys[i], *this);
   }
   buttons[MUTE]->setToggleButton(true);
 
   for (int i=0; i<NUM_LABELS; i++) {
+    labels[i]->close();
     labels[i] = skin.getLabel(labelKeys[i], *this);
   }
 
   for (int i=0; i<NUM_SLIDERS; i++) {
+    sliders[i]->close();
     sliders[i] = skin.getSlider(sliderKeys[i], *this);
   }
 
-  updateTimer = new QTimer(this);
 }
 void MenuScreen::init() {
   connect( buttons[AUDIO], SIGNAL(clicked()), audioPlayer, SLOT(display()) );
@@ -80,17 +84,25 @@ void MenuScreen::init() {
   connect( buttons[VOLUP], SIGNAL(clicked()), mediaPlayer, SLOT(volumeUp()) );
   connect( buttons[VOLDN], SIGNAL(clicked()), mediaPlayer, SLOT(volumeDown()) );
   connect( buttons[MUTE], SIGNAL(clicked()), mediaPlayer, SLOT(volumeMute()) );
+  connect( buttons[VOLUP], SIGNAL(clicked()), this, SLOT(updateVolume()) );
+  connect( buttons[VOLDN], SIGNAL(clicked()), this, SLOT(updateVolume()) );
+  connect( buttons[MUTE], SIGNAL(clicked()), this, SLOT(updateVolume()) );
   connect( buttons[EXIT], SIGNAL(clicked()), qApp, SLOT(quit()) );
   //connect( buttons[APPEAR], SIGNAL(clicked()), configDialog, SLOT(exec()) );
   connect( buttons[APPEAR], SIGNAL(clicked()), skinBrowser, SLOT(display()) );
   connect( updateTimer, SIGNAL(timeout()), this, SLOT(updateInfo()) );
   updateTimer->changeInterval(500);
+  updateVolume();
 }
 
 void MenuScreen::updateInfo()
 {
   labels[TIME]->setText(QTime::currentTime().toString("hh:mm:ss"));
   labels[DATE]->setText(QDate::currentDate().toString("d/M/yyyy"));
-//  labels[VOLUME]->setText(QString::number(mediaPlayer->getVolume()) + "%");
-  sliders[MASTER]->setValue(mediaPlayer->getVolume()/5);
+//   labels[VOLUME]->setText(QString::number(mediaPlayer->getVolume()) + "%");
+}
+
+void MenuScreen::updateVolume() {
+// labels[VOLUME]->setText(QString::number(mediaPlayer->getVolume()) + "%");
+ sliders[MASTER]->setValue(mediaPlayer->getVolume()/5);
 }

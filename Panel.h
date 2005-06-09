@@ -24,7 +24,8 @@ class Panel : public FunctionScreen
   Q_OBJECT
  public:
   Panel(QWidget *parent);
-  
+  void loadSkin();
+
  protected slots:
   virtual void updateInfo();
   virtual bool previous() = 0;
@@ -35,7 +36,6 @@ class Panel : public FunctionScreen
   void prevReleased();
 
  protected:
-  void loadSkin();
 
   enum { MUTE, VOLDN, VOLUP, ZOOM, LIST, MIXER, PREV, STOP, PLAY, NEXT,
 	 UP, DOWN, EXIT, NUM_BUTTONS }; 

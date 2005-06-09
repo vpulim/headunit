@@ -17,6 +17,7 @@ class MenuScreen : public FunctionScreen
 
  private slots:
   void updateInfo();
+  void updateVolume();
 
  private:
   enum { AUDIO, VIDEO, DVD, RADIO, LAUNCH, GPS, MUTE, VOLDN, VOLUP, MIXER, 

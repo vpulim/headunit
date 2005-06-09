@@ -52,8 +52,10 @@ void Panel::loadSkin()
   skin.set(*this);
   for (int i=0; i<NUM_BUTTONS; i++)
     buttons[i] = skin.getButton(keys[i], *this);
+
   for (int i=0; i<NUM_LABELS; i++)
     labels[i] = skin.getLabel(labelKeys[i], *this);
+
 
 }
 
