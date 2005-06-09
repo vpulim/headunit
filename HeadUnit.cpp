@@ -72,7 +72,7 @@ int initializeGui()
   
 //   top->display();
   menu->display();
-
+//   mediaPlayer->setEQ();
   switch (appState->function) {
   case ApplicationState::MUSIC:
     audioPlayer->display();
@@ -107,19 +107,20 @@ void refreshGui() {
    menu->hide();
    videoBrowser->hide();
    audioBrowser->hide();
-   //mediaPlayer->hide();
-   //QDESTROY(mediaPlayer);
+   mediaPlayer->hide();
+   QDESTROY(mediaPlayer);
    audioPlayer->hide();
    skinBrowser->hide();
 
 
-  menu->initSkin();
+  //menu->initSkin();
   videoBrowser->initSkin();
   audioBrowser->initSkin();
   //mediaPlayer->initSkin();
-  //mediaPlayer = new MediaPlayer(top);
   audioPlayer->initSkin();
+  mediaPlayer = new MediaPlayer(top);
   skinBrowser->initSkin();
+  menu->initSkin();
   
    menu->init();
    audioPlayer->init();
